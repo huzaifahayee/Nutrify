@@ -1,0 +1,27 @@
+# Datasets (To not upload raw data)
+data/
+dataset/
+raw_data/
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Model files
+*.pth
+*.pt
+*.h5
+
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+
+# OS / editor
+.DS_Store
+.vscode/
