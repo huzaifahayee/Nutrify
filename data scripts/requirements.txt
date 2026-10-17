@@ -1,0 +1,9 @@
+icrawler
+pillow
+imagehash
+opencv-python
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
