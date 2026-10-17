@@ -73,7 +73,7 @@ The script also records the width, height, brightness and blur score of every ke
   \label{tab:cleaning}
 \end{table}
 
-Table~\ref{tab:perdish} gives the effect of cleaning on each dish. A visual spot check of the cleaned folders found the images to be representative of their dish and not noticeably blurred.
+Table~\ref{tab:perdish} gives the effect of cleaning on each dish. A visual spot check showed that most cleaned images are representative of their dish and not blurred, although some watermarked, text-overlaid or off-topic images survive (see the limitations below).
 
 \begin{table}[H]
   \centering
@@ -166,36 +166,33 @@ Cleaning reduced the collection from 5,013 to 3,889 images, and every dish lost 
   \includegraphics[width=0.6\textwidth]{image_sizes.png}
   \caption{Image resolution spread.}
 \end{figure}
-% TODO (Abdullah): add 1-2 sentences on what this chart shows (typical image size, how much it varies).
-This chart shows the spread of image widths and heights after cleaning, which motivates resizing everything to a common $224 \times 224$ input.
+Image resolution varies widely. Most images are smaller than about 2,000 pixels on each side, with a dense cluster below 1,500 pixels, but a small number exceed 4,000 pixels and the largest are around 8,000 pixels wide. Width and height grow together. This spread motivates resizing everything to a common $224 \times 224$ input.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{brightness_per_dish.png}
   \caption{Brightness per dish (lighting variation).}
 \end{figure}
-% TODO (Abdullah): add 1-2 sentences on what you see (which dishes are brighter or darker, how wide the spread is).
-This chart compares the mean brightness of the images of each dish and shows how much the lighting varies within and between dishes.
+Lighting varies a lot within every dish: for most dishes the whiskers extend from roughly 60 or lower to roughly 190 or higher, so each dish contains both very dark and very bright photos. The median brightness is fairly similar across dishes, from about 107 for chicken\_karahi (darkest) to about 141 for pulao (brightest), so lighting differs more between individual images than between dishes.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{source_and_setting.png}
   \caption{Images by source and by setting (home/restaurant).}
 \end{figure}
-% TODO (Abdullah): add 1-2 sentences on what you see (balance between Kaggle and Bing, home versus restaurant).
-This chart shows how many of the images come from each source and from each setting (home or restaurant).
+Roughly 70\% of the cleaned images come from Bing and roughly 30\% from the Kaggle dataset. The setting is unknown for most images (roughly two thirds); among the rest, restaurant and home photos are about equally common.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{sample_grid.png}
   \caption{Random samples per dish.}
 \end{figure}
-% TODO (Abdullah): add 1-2 sentences on what you notice in the samples (variety of angles, plating, backgrounds).
-The sample grid shows random cleaned images of each dish and was used as a visual check of the cleaning results.
+The sample grid shows four random cleaned images per dish. The images vary widely in angle, plating and background, and most show the correct dish. The grid also exposes the problems listed under limitations: stock-photo watermarks (for example Alamy and Shutterstock), text banners and overlays, a menu flyer among the haleem images, and a few images that do not appear to show the labelled dish (for example in palak\_paneer and halwa\_puri).
 
 \subsection{Limitations}
 \begin{itemize}
-  \item \textbf{Watermarks and text overlays:} images scraped from Bing can contain watermarks, captions or text overlays, which automatic blur and duplicate filters do not remove. A model could pick up on these instead of the food.
+  \item \textbf{Watermarks and text overlays:} images scraped from Bing can contain watermarks, captions or text overlays, which the automatic blur and duplicate filters do not remove. Stock-photo watermarks (for example Alamy and Shutterstock), text banners (some in Urdu) and even a menu flyer are visible in the sample grid. A model could pick up on these instead of the food.
+  \item \textbf{Label noise:} in the random sample grid (four images per dish), a few images do not appear to show the labelled dish (for example in palak\_paneer and halwa\_puri). The cleaning filters cannot detect wrong-dish images and the dataset was reviewed only by sampling, so some mislabelled images probably remain.
   \item \textbf{Source bias:} four dishes (samosa, pakora, daal and paratha\_roll) draw on a single Kaggle dataset, while the other ten come only from Bing. The two sources may differ in photographic style, so a model could partly learn the source instead of the dish.
   \item \textbf{Close substitutes:} the Kaggle classes \texttt{dal\_makhani} and \texttt{kaathi\_rolls} stand in for daal and paratha\_roll. They are similar dishes but not identical to what the project is meant to recognise.
   \item \textbf{Class imbalance:} raw counts range from 229 to 636 images per dish and cleaned counts from 128 to 498. chicken\_karahi, with 128 images, is below the 150-image target we set, and with a 15\% split its validation and test sets contain only about 19 images each, so its results will be noisy.
