@@ -1,0 +1,203 @@
+% Phase 2 -- written by Abdullah
+% NOTE: every number below comes from the terminal output of clean_data.py and
+% preprocess.py, from data/cleaning_report.csv, or from the team guide (raw counts).
+% If the dataset changes (for example after top-up scraping), re-run the scripts
+% and update every number in this file.
+\section{Phase 2: Data Acquisition and Preprocessing}
+
+\subsection{Collection}
+Raw images were collected from two sources, giving 5,013 images across the 14 dishes before any cleaning. Kaggle contributes 1,154 of them and Bing scraping the remaining 3,859.
+
+\paragraph{Bing image scraping.} The script \texttt{collect\_images.py} downloads images from Bing using the \texttt{icrawler} package, with five query variants per dish. Every downloaded URL is logged in \texttt{raw\_metadata.csv}, so each image can be traced back to where it came from.
+
+\paragraph{Kaggle dataset.} The script \texttt{import\_dataset.py} imports four classes from the Kaggle ``Indian Food Classification'' dataset (Pushkar Jain) and maps them onto our dishes: \texttt{samosa} $\rightarrow$ samosa (262 images), \texttt{pakode} $\rightarrow$ pakora (278), \texttt{dal\_makhani} $\rightarrow$ daal (321) and \texttt{kaathi\_rolls} $\rightarrow$ paratha\_roll (293). The remaining ten dishes come only from Bing.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|l|}
+    \hline
+    \textbf{Dish} & \textbf{Raw images} & \textbf{Source} \\
+    \hline
+    daal            & 636 & Bing + Kaggle (dal makhani, 321) \\
+    paratha\_roll   & 566 & Bing + Kaggle (kathi rolls, 293) \\
+    samosa          & 556 & Bing + Kaggle (samosa, 262) \\
+    pakora          & 525 & Bing + Kaggle (pakode, 278) \\
+    seekh\_kebab    & 317 & Bing \\
+    halwa\_puri     & 314 & Bing \\
+    chicken\_biryani & 296 & Bing \\
+    nihari          & 291 & Bing \\
+    chicken\_tikka  & 289 & Bing \\
+    pulao           & 261 & Bing \\
+    haleem          & 254 & Bing \\
+    aloo\_gosht     & 242 & Bing \\
+    palak\_paneer   & 237 & Bing \\
+    chicken\_karahi & 229 & Bing \\
+    \hline
+    \textbf{Total}  & \textbf{5,013} & \\
+    \hline
+  \end{tabular}
+  \caption{Raw images per dish and their source, before cleaning.}
+\end{table}
+
+\subsection{Cleaning Implementation}
+Cleaning is done by \texttt{clean\_data.py}, which never deletes the raw files: the images that pass are copied into a separate \texttt{data/clean} folder, together with \texttt{clean\_metadata.csv} and \texttt{cleaning\_report.csv}. The script applies the following checks:
+\begin{itemize}
+  \item \textbf{Missing labels and duplicate metadata rows:} rows with no dish label, or repeated rows, are dropped.
+  \item \textbf{Missing or corrupt files:} images that are not on disk or cannot be opened are dropped.
+  \item \textbf{Tiny images:} images whose shorter side is below 150 pixels are dropped.
+  \item \textbf{Extreme aspect ratio:} images with an aspect ratio above 3 are dropped.
+  \item \textbf{Blur:} images whose Laplacian variance is below 40 are dropped as blurry.
+  \item \textbf{Exact duplicates:} images with an identical MD5 hash are dropped.
+  \item \textbf{Near duplicates:} images whose perceptual hash distance to an earlier image is at most 4 are dropped.
+\end{itemize}
+The script also records the width, height, brightness and blur score of every kept image, which are used for the exploratory analysis. Of the 5,013 raw images, 1,124 (22.4\%) were removed and 3,889 (77.6\%) were kept. Table~\ref{tab:cleaning} shows what each step removed, as reported in \texttt{cleaning\_report.csv}; the report does not list separate counts for the missing-file, corrupt-file and tiny-image checks.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|}
+    \hline
+    \textbf{Cleaning step} & \textbf{Images removed} \\
+    \hline
+    Missing label                          & 0 \\
+    Duplicate metadata rows                & 0 \\
+    Exact duplicates (MD5)                 & 697 \\
+    Blurry (Laplacian variance $<$ 40)     & 217 \\
+    Near duplicates (perceptual hash $\leq$ 4) & 205 \\
+    Extreme aspect ratio ($>$ 3)           & 5 \\
+    \hline
+    \textbf{Total removed}                 & \textbf{1,124} \\
+    \textbf{Images kept}                   & \textbf{3,889} \\
+    \hline
+  \end{tabular}
+  \caption{Images removed by each cleaning step (from \texttt{cleaning\_report.csv}).}
+  \label{tab:cleaning}
+\end{table}
+
+Table~\ref{tab:perdish} gives the effect of cleaning on each dish. A visual spot check of the cleaned folders found the images to be representative of their dish and not noticeably blurred.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|r|}
+    \hline
+    \textbf{Dish} & \textbf{Raw} & \textbf{Kept after cleaning} \\
+    \hline
+    samosa          & 556 & 498 \\
+    pakora          & 525 & 482 \\
+    daal            & 636 & 461 \\
+    paratha\_roll   & 566 & 422 \\
+    chicken\_biryani & 296 & 248 \\
+    seekh\_kebab    & 317 & 241 \\
+    nihari          & 291 & 236 \\
+    haleem          & 254 & 227 \\
+    chicken\_tikka  & 289 & 224 \\
+    pulao           & 261 & 197 \\
+    palak\_paneer   & 237 & 187 \\
+    halwa\_puri     & 314 & 171 \\
+    aloo\_gosht     & 242 & 167 \\
+    chicken\_karahi & 229 & 128 \\
+    \hline
+    \textbf{Total}  & \textbf{5,013} & \textbf{3,889} \\
+    \hline
+  \end{tabular}
+  \caption{Images per dish before and after cleaning.}
+  \label{tab:perdish}
+\end{table}
+
+\subsection{Feature Strategy}
+The script \texttt{preprocess.py} prepares the cleaned images for model training in the following way.
+
+\paragraph{Label encoding.} The 14 dish names are sorted alphabetically and mapped to integer ids: aloo\_gosht = 0, chicken\_biryani = 1, chicken\_karahi = 2, chicken\_tikka = 3, daal = 4, haleem = 5, halwa\_puri = 6, nihari = 7, pakora = 8, palak\_paneer = 9, paratha\_roll = 10, pulao = 11, samosa = 12 and seekh\_kebab = 13. The mapping is saved in \texttt{classes.json}.
+
+\paragraph{Resizing and scaling.} Every image is resized to $224 \times 224$ pixels, the input size of EfficientNet-B0, and its pixel values are scaled to the range $[0,1]$.
+
+\paragraph{Stratified split.} The 3,889 cleaned images are divided 70/15/15 into training, validation and test sets. The split is stratified by dish, so each set keeps roughly the same class proportions, and it uses a fixed random seed (42) so it can be reproduced. Because duplicates were removed before splitting, near-identical images cannot end up in both the training and test sets.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|}
+    \hline
+    \textbf{Split} & \textbf{Images} \\
+    \hline
+    Train      & 2,722 \\
+    Validation & 583 \\
+    Test       & 584 \\
+    \hline
+    \textbf{Total} & \textbf{3,889} \\
+    \hline
+  \end{tabular}
+  \caption{Size of each split.}
+\end{table}
+
+\paragraph{Normalisation.} The per-channel mean and standard deviation are computed from the training set only, so no information from the validation or test images leaks into preprocessing. They are saved in \texttt{norm\_stats.json} and will be used to normalise the inputs during model training.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|r|}
+    \hline
+    \textbf{Channel} & \textbf{Mean} & \textbf{Std} \\
+    \hline
+    Red   & 0.5901 & 0.2872 \\
+    Green & 0.4925 & 0.2861 \\
+    Blue  & 0.3718 & 0.3095 \\
+    \hline
+  \end{tabular}
+  \caption{Channel statistics of the training set (pixel values in $[0,1]$).}
+\end{table}
+
+\subsection{Exploratory Data Analysis}
+The charts below were generated by \texttt{eda.py} from the cleaned and raw metadata.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{class_distribution.png}
+  \caption{Images per dish after cleaning.}
+\end{figure}
+The classes are imbalanced. Samosa has the most images (498) and chicken\_karahi the fewest (128), a ratio of about 3.9 to 1. The four largest classes (samosa, pakora, daal and paratha\_roll) are exactly the four dishes that also draw on the Kaggle dataset.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{raw_vs_clean.png}
+  \caption{Raw versus cleaned image counts.}
+\end{figure}
+Cleaning reduced the collection from 5,013 to 3,889 images, and every dish lost some images. The largest share was lost by halwa\_puri (143 of 314, about 46\%) followed by chicken\_karahi (101 of 229, about 44\%), while pakora lost the smallest share (43 of 525, about 8\%).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image_sizes.png}
+  \caption{Image resolution spread.}
+\end{figure}
+% TODO (Abdullah): add 1-2 sentences on what this chart shows (typical image size, how much it varies).
+This chart shows the spread of image widths and heights after cleaning, which motivates resizing everything to a common $224 \times 224$ input.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{brightness_per_dish.png}
+  \caption{Brightness per dish (lighting variation).}
+\end{figure}
+% TODO (Abdullah): add 1-2 sentences on what you see (which dishes are brighter or darker, how wide the spread is).
+This chart compares the mean brightness of the images of each dish and shows how much the lighting varies within and between dishes.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{source_and_setting.png}
+  \caption{Images by source and by setting (home/restaurant).}
+\end{figure}
+% TODO (Abdullah): add 1-2 sentences on what you see (balance between Kaggle and Bing, home versus restaurant).
+This chart shows how many of the images come from each source and from each setting (home or restaurant).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{sample_grid.png}
+  \caption{Random samples per dish.}
+\end{figure}
+% TODO (Abdullah): add 1-2 sentences on what you notice in the samples (variety of angles, plating, backgrounds).
+The sample grid shows random cleaned images of each dish and was used as a visual check of the cleaning results.
+
+\subsection{Limitations}
+\begin{itemize}
+  \item \textbf{Watermarks and text overlays:} images scraped from Bing can contain watermarks, captions or text overlays, which automatic blur and duplicate filters do not remove. A model could pick up on these instead of the food.
+  \item \textbf{Source bias:} four dishes (samosa, pakora, daal and paratha\_roll) draw on a single Kaggle dataset, while the other ten come only from Bing. The two sources may differ in photographic style, so a model could partly learn the source instead of the dish.
+  \item \textbf{Close substitutes:} the Kaggle classes \texttt{dal\_makhani} and \texttt{kaathi\_rolls} stand in for daal and paratha\_roll. They are similar dishes but not identical to what the project is meant to recognise.
+  \item \textbf{Class imbalance:} raw counts range from 229 to 636 images per dish and cleaned counts from 128 to 498. chicken\_karahi, with 128 images, is below the 150-image target we set, and with a 15\% split its validation and test sets contain only about 19 images each, so its results will be noisy.
+  \item \textbf{Licensing:} the scraped images belong to their original owners. They were collected for academic use only and are not redistributed: the dataset is excluded from the repository.
+\end{itemize}
