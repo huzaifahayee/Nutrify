@@ -1,0 +1,70 @@
+% Phase 1 -- written by Huzaifa
+\section{Phase 1: Problem Definition}
+
+\subsection{Problem Statement}
+Tracking what we eat is one of the simplest ways to manage weight and health,
+but it only works if logging a meal is quick. In South Asia it usually is not.
+Popular nutrition apps are built around Western food databases, so everyday
+dishes such as biryani, nihari, haleem and karahi are either missing, listed
+under unfamiliar names, or represented by a generic entry that does not match
+what is on the plate.
+
+Users are left to search manually, guess which entry is closest, and estimate
+the portion by eye. The error is large because the calorie content of desi
+dishes depends heavily on the oil or ghee used, the cut of meat and the serving
+size, none of which a generic entry captures. Most people give up after a few
+days, which defeats the purpose of tracking.
+
+Nutrify addresses this by turning a single photo of a meal into a dish name
+and a calorie range. The system has three parts: an image classification model
+that recognises 14 popular desi dishes, a calorie module that maps the
+recognised dish to a per-serving value with an adjustable portion size, and a
+web application with image upload and camera capture that returns the dish
+name, a confidence score and a calorie range in seconds.
+
+\subsection{Target Audience}
+\textbf{Primary users.} Everyday people in Pakistan and the wider South Asian
+region who want to keep an eye on what they eat, for example to lose or gain
+weight, follow a fitness plan, or simply eat more mindfully. They are
+comfortable taking a photo on a phone but do not want to type in meals or
+look up nutrition tables.
+
+\textbf{Secondary users.} Students, fitness coaches and dietitians who need a
+quick estimate when discussing local food, and who currently rely on printed
+tables or Western-centric apps.
+
+\textbf{Research gap.} Widely used food recognition benchmarks such as
+Food-101 are dominated by Western dishes, and there are few public, labelled
+image collections for Pakistani food. As a result, models trained on those
+benchmarks do not transfer well to dishes like nihari or haleem. This project
+helps fill that gap by assembling a curated dataset of desi dishes, documenting
+how it was collected and cleaned, and evaluating how the model behaves on
+look-alike dishes, different lighting and restaurant versus home-cooked photos.
+
+\subsection{AI Justification}
+\textbf{Why not rule-based programming.} Recognising a dish from a photo cannot
+be written as a set of if--else rules. The same dish looks different from one
+cook, restaurant or camera to the next, and the lighting, plating and
+background change from photo to photo. Dishes such as nihari, haleem and
+aloo gosht are also visually similar brown stews, so simple colour or texture
+rules would confuse them. Any hand-written rule set would need constant
+exceptions and would still fail on photos it has not seen.
+
+\textbf{Why deep learning fits.} Convolutional neural networks learn the
+relevant visual features, from edges and textures up to whole-dish patterns,
+directly from labelled examples instead of relying on features chosen by hand.
+This is the standard approach for image classification and it handles the
+variation in appearance that defeats fixed rules.
+
+\textbf{Why transfer learning.} Collecting thousands of images per dish is not
+realistic for a student project. Starting from a network pretrained on a large
+general image collection (EfficientNet-B0) lets us reuse features it has
+already learned and fine-tune it on roughly 150 to 300 images per dish. We will
+compare it against a baseline CNN trained from scratch to show the benefit.
+EfficientNet-B0 is also small enough to serve through a web application.
+
+\textbf{Where AI stops.} Machine learning is used only for the part that needs
+it, recognising the dish. The calorie value comes from a verified per-serving
+entry in a food composition database, scaled by the chosen portion size. Keeping
+that step deterministic makes the numbers traceable and easier to defend than a
+model that guesses calories directly.
