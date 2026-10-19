@@ -41,4 +41,17 @@ QUERY_TEMPLATES = [
     "{n} close up",
 ]
 
+# Different wording for top-up scraping (the default queries return mostly
+# the same images again, which cleaning then removes as duplicates).
+EXTRA_TEMPLATES = [
+    "{n} recipe",
+    "{n} dhaba style",
+    "{n} served in bowl",
+    "{n} dinner",
+    "{n} Lahore",
+    "{n} Karachi",
+    "{n} desi food",
+    "{n} home cooked",
+]
+
 META_COLUMNS = ["filename", "dish", "source", "url", "license", "setting"]

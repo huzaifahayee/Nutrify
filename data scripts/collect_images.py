@@ -1,6 +1,7 @@
 """Phase 2 - Collection: scrape images per dish and log every source.
 
 Usage:  python collect_images.py --per-query 80
+Top-up: python collect_images.py --dishes chicken_karahi aloo_gosht --set extra --per-query 60
 Output: data/raw/<dish>/*.jpg  and  data/raw_metadata.csv
 """
 import argparse
@@ -10,15 +11,16 @@ from pathlib import Path
 from icrawler.builtin import BingImageCrawler
 from icrawler.downloader import ImageDownloader
 
-from config import DISHES, QUERY_TEMPLATES, RAW, RAW_META, META_COLUMNS
+from config import (DISHES, QUERY_TEMPLATES, EXTRA_TEMPLATES, RAW, RAW_META,
+                    META_COLUMNS)
 
 CURRENT = {"dish": "", "query": ""}
 
 
 def guess_setting(query: str) -> str:
-    if "homemade" in query:
+    if "homemade" in query or "home cooked" in query:
         return "home"
-    if "restaurant" in query:
+    if "restaurant" in query or "dhaba" in query:
         return "restaurant"
     return "unknown"
 
@@ -41,16 +43,18 @@ class LoggingDownloader(ImageDownloader):
             csv.DictWriter(f, fieldnames=META_COLUMNS).writerow(row)
 
 
-def main(per_query: int):
+def main(per_query: int, dishes, template_set: str):
     RAW.mkdir(parents=True, exist_ok=True)
     if not RAW_META.exists():
         with open(RAW_META, "w", newline="", encoding="utf-8") as f:
             csv.DictWriter(f, fieldnames=META_COLUMNS).writeheader()
 
-    for slug, name in DISHES.items():
+    templates = EXTRA_TEMPLATES if template_set == "extra" else QUERY_TEMPLATES
+    selected = {k: v for k, v in DISHES.items() if not dishes or k in dishes}
+    for slug, name in selected.items():
         out_dir = RAW / slug
         out_dir.mkdir(parents=True, exist_ok=True)
-        for i, template in enumerate(QUERY_TEMPLATES):
+        for template in templates:
             query = template.format(n=name)
             CURRENT.update(dish=slug, query=query)
             print(f"[{slug}] {query}")
@@ -67,4 +71,9 @@ def main(per_query: int):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--per-query", type=int, default=80)
-    main(ap.parse_args().per_query)
+    ap.add_argument("--dishes", nargs="+", choices=list(DISHES),
+                    help="only scrape these dish slugs (default: all)")
+    ap.add_argument("--set", dest="template_set", choices=["default", "extra"],
+                    default="default", help="which query wording to use")
+    a = ap.parse_args()
+    main(a.per_query, a.dishes, a.template_set)
