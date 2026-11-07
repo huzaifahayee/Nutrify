@@ -1,0 +1,9 @@
+run_id,model,lr,finetune_lr,batch_size,dropout,weight_decay,label_smoothing,best_val_loss,best_val_acc,epochs_run,minutes
+default,efficientnet,0.001,0.0001,32,0.3,0.0001,0.1,1.190226,0.776563,8,2.20
+lr_3e-4,efficientnet,0.0003,0.0001,32,0.3,0.0001,0.1,1.193708,0.773438,8,2.11
+lr_1e-4,efficientnet,0.0001,0.0001,32,0.3,0.0001,0.1,1.237739,0.767188,8,2.12
+batch_16,efficientnet,0.001,0.0001,16,0.3,0.0001,0.1,1.167360,0.792188,8,2.29
+batch_64,efficientnet,0.001,0.0001,64,0.3,0.0001,0.1,1.216666,0.768750,8,2.15
+dropout_0.2,efficientnet,0.001,0.0001,32,0.2,0.0001,0.1,1.186558,0.781250,8,2.11
+dropout_0.5,efficientnet,0.001,0.0001,32,0.5,0.0001,0.1,1.199944,0.775000,8,2.19
+wd_1e-2,efficientnet,0.001,0.0001,32,0.3,0.01,0.1,1.190115,0.776563,8,2.17
