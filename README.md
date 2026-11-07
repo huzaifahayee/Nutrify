@@ -93,8 +93,9 @@ data/processed/
 └── norm_stats.json
 ```
 Images are not in Git. The team shares the processed split as a zip on Drive:
-TODO: paste Drive link for processed.zip. Unzip it so that `data/processed/`
-exists in the repo root.
+https://drive.google.com/file/d/1Gyzhh16OMr_QpBggNqiQkYdxqsdeUutr/view?usp=drive_link
+
+Unzip it inside `data/` so that `data/processed/` exists in the repo root.
 
 ## Training and tuning
 Run from the repo root. Defaults are in `src/train.py`; `python src/train.py --help` lists all flags.
