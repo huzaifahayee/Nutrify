@@ -15,6 +15,7 @@ venv/
 *.pth
 *.pt
 *.h5
+checkpoints/
 
 # LaTeX build files
 *.aux
@@ -25,3 +26,7 @@ venv/
 # OS / editor
 .DS_Store
 .vscode/
+
+# Local prompt files
+NUTRIFY_D2_PROMPT.md
+Deliverable 2.pdf
