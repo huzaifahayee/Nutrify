@@ -1,0 +1,16 @@
+{
+  "aloo_gosht": 0,
+  "chicken_biryani": 1,
+  "chicken_karahi": 2,
+  "chicken_tikka": 3,
+  "daal": 4,
+  "haleem": 5,
+  "halwa_puri": 6,
+  "nihari": 7,
+  "pakora": 8,
+  "palak_paneer": 9,
+  "paratha_roll": 10,
+  "pulao": 11,
+  "samosa": 12,
+  "seekh_kebab": 13
+}
