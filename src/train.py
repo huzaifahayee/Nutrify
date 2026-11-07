@@ -67,6 +67,17 @@ def parse_args(argv=None):
     p.add_argument("--unfreeze-blocks", type=int, default=3)
     p.add_argument("--num-workers", type=int, default=2)
     p.add_argument(
+        "--max-epochs",
+        type=int,
+        default=None,
+        help="Cap total epochs (tune.py uses this so searches stay short)",
+    )
+    p.add_argument(
+        "--skip-test",
+        action="store_true",
+        help="Skip test-set prediction (tune.py does not need a preds CSV)",
+    )
+    p.add_argument(
         "--pretrained",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -316,6 +327,8 @@ def fit_phase(
 
 def run(args):
     set_seed(args.seed)
+    if args.max_epochs is not None:
+        args.epochs = min(args.epochs, args.max_epochs)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"device: {device}")
 
@@ -427,15 +440,20 @@ def run(args):
     if not ckpt_path.exists():
         save_checkpoint(ckpt_path, model, args, class_names)
 
-    ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
-    model.load_state_dict(ckpt["state_dict"])
-    n_preds = write_test_preds(
-        model, test_loader, device, class_names, args.data_dir, preds_csv
-    )
     save_curves(history, curves_png, finetune_start_epoch=finetune_start)
     print(f"wrote {history_csv}")
     print(f"wrote {curves_png}")
-    print(f"wrote {preds_csv} ({n_preds} rows)")
+
+    if args.skip_test:
+        print("skipping test prediction")
+    else:
+        ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
+        model.load_state_dict(ckpt["state_dict"])
+        n_preds = write_test_preds(
+            model, test_loader, device, class_names, args.data_dir, preds_csv
+        )
+        print(f"wrote {preds_csv} ({n_preds} rows)")
+
     print(f"best val_loss={best_state['val_loss']:.4f} at epoch {best_state['epoch']}")
     return {
         "best_val_loss": best_state["val_loss"],
