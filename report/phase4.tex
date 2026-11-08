@@ -124,6 +124,81 @@ Figure~\ref{fig:curves-efficientnet} shows the EfficientNet-B0 curves.
   \caption{EfficientNet-B0 training and validation curves.}
   \label{fig:curves-efficientnet}
 \end{figure}
+\subsection{Evaluation metrics and why they fit}
+The 14 classes are imbalanced (Phase 2): \texttt{palak\_paneer} has 187
+images and \texttt{samosa} 498. Accuracy alone can hide weak classes, so we
+also report:
+\begin{itemize}
+  \item \textbf{Precision and recall per dish}: precision says how often a
+        predicted dish is right, recall says how many true images of a dish
+        were found. Together they show each dish's errors.
+  \item \textbf{Macro F1}: the mean F1 over the 14 dishes, so every dish has
+        equal weight regardless of size.
+  \item \textbf{AUC-ROC (one-vs-rest)}: uses the predicted probabilities,
+        not only the top choice, so it shows how well a model ranks the
+        correct dish.
+  \item \textbf{Confusion matrix}: shows which dishes are mixed up.
+\end{itemize}
+All metrics are computed on the 641 test images by \texttt{src/evaluate.py}
+from the prediction files \texttt{results/preds\_baseline\_test.csv} and
+\texttt{results/preds\_efficientnet\_test.csv}.
+
+\subsection{Results}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|r|}
+    \hline
+    \textbf{Metric} & \textbf{Baseline CNN} & \textbf{EfficientNet-B0} \\ \hline
+    Accuracy        & 0.5086 & 0.7988 \\ \hline
+    Macro precision & 0.5044 & 0.7830 \\ \hline
+    Macro recall    & 0.4799 & 0.7778 \\ \hline
+    Macro F1        & 0.4700 & 0.7785 \\ \hline
+    Macro AUC-ROC   & 0.8915 & 0.9706 \\ \hline
+  \end{tabular}
+  \caption{Test-set results (641 images), from
+  \texttt{results/metrics\_baseline.csv} and
+  \texttt{results/metrics\_efficientnet.csv}.}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    \textbf{Dish} & \textbf{Test images} & \textbf{Baseline F1} & \textbf{EfficientNet F1} \\ \hline
+    aloo\_gosht      & 43 & 0.364 & 0.783 \\ \hline
+    chicken\_biryani & 37 & 0.473 & 0.649 \\ \hline
+    chicken\_karahi  & 45 & 0.400 & 0.703 \\ \hline
+    chicken\_tikka   & 33 & 0.233 & 0.698 \\ \hline
+    daal             & 69 & 0.521 & 0.849 \\ \hline
+    haleem           & 34 & 0.174 & 0.706 \\ \hline
+    halwa\_puri      & 40 & 0.623 & 0.811 \\ \hline
+    nihari           & 35 & 0.410 & 0.757 \\ \hline
+    pakora           & 73 & 0.545 & 0.808 \\ \hline
+    palak\_paneer    & 28 & 0.800 & 0.867 \\ \hline
+    paratha\_roll    & 64 & 0.600 & 0.873 \\ \hline
+    pulao            & 29 & 0.360 & 0.604 \\ \hline
+    samosa           & 75 & 0.719 & 0.940 \\ \hline
+    seekh\_kebab     & 36 & 0.357 & 0.853 \\ \hline
+  \end{tabular}
+  \caption{Per-dish F1 on the test set.}
+\end{table}
+
+EfficientNet-B0 has a higher F1 than the baseline for every dish. The
+largest gains are for \texttt{haleem} (0.174 to 0.706), \texttt{seekh\_kebab}
+(0.357 to 0.853) and \texttt{chicken\_tikka} (0.233 to 0.698).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{confusion_baseline.png}
+  \caption{Baseline CNN confusion matrix (row-normalised, counts in cells).}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{confusion_efficientnet.png}
+  \caption{EfficientNet-B0 confusion matrix (row-normalised, counts in cells).}
+\end{figure}
+
 
 % Summary:
 % 1) Describes the from-scratch baseline CNN: layer table, block diagram, loss and optimiser.
