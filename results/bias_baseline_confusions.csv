@@ -1,0 +1,11 @@
+true_label,pred_label,count
+haleem,daal,11
+pulao,chicken_biryani,11
+aloo_gosht,daal,10
+aloo_gosht,nihari,9
+nihari,daal,9
+chicken_tikka,pakora,8
+chicken_karahi,seekh_kebab,7
+seekh_kebab,pakora,7
+daal,nihari,6
+chicken_tikka,daal,6
