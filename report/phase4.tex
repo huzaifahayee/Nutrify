@@ -115,8 +115,12 @@ of over-fitting.
 \end{figure}
 
 Figure~\ref{fig:curves-efficientnet} shows the EfficientNet-B0 curves.
-\textbf{TODO:} add one or two sentences on these curves from
-\texttt{results/history\_efficientnet.csv}.
+In the last epoch (epoch 20, fine-tuning stage) EfficientNet-B0 reached a
+training accuracy of $0.9411$ and a validation accuracy of $0.8219$, with a
+validation loss of $1.0809$ (\texttt{results/history\_efficientnet.csv}). The
+gap of about 12 points between training and validation accuracy points to
+some over-fitting, whereas the baseline's two accuracies stayed close
+together. The losses stay well above zero partly because of label smoothing.
 
 \begin{figure}[H]
   \centering
@@ -198,7 +202,102 @@ largest gains are for \texttt{haleem} (0.174 to 0.706), \texttt{seekh\_kebab}
   \includegraphics[width=0.85\textwidth]{confusion_efficientnet.png}
   \caption{EfficientNet-B0 confusion matrix (row-normalised, counts in cells).}
 \end{figure}
+\subsection{Error analysis}
+\textbf{Weakest dishes.} Table~\ref{tab:worst} lists the three dishes with
+the lowest recall (accuracy within the dish) for each model, from
+\texttt{results/bias\_baseline\_class.csv} and
+\texttt{results/bias\_efficientnet\_class.csv}.
 
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l|r|r|}
+    \hline
+    \textbf{Model} & \textbf{Dish} & \textbf{Test images} & \textbf{Recall} \\ \hline
+    Baseline     & haleem           & 34 & 0.118 \\ \hline
+    Baseline     & chicken\_tikka   & 33 & 0.152 \\ \hline
+    Baseline     & aloo\_gosht      & 43 & 0.279 \\ \hline
+    EfficientNet & pulao            & 29 & 0.552 \\ \hline
+    EfficientNet & chicken\_biryani & 37 & 0.649 \\ \hline
+    EfficientNet & chicken\_tikka   & 33 & 0.667 \\ \hline
+  \end{tabular}
+  \caption{Three weakest dishes per model by recall.}
+  \label{tab:worst}
+\end{table}
+
+\textbf{Confused pairs.} For EfficientNet the most frequent errors
+(\texttt{results/bias\_efficientnet\_confusions.csv}) are \texttt{pulao}
+predicted as \texttt{chicken\_biryani} (7 images) and
+\texttt{chicken\_biryani} predicted as \texttt{pulao} (6), followed by
+\texttt{chicken\_karahi} as \texttt{aloo\_gosht} (5) and \texttt{samosa} as
+\texttt{paratha\_roll} (5). These look-alike dishes are plausibly confused
+because of similar appearance, though we did not test this. The baseline's
+top errors (\texttt{results/bias\_baseline\_confusions.csv}) are
+\texttt{haleem} as \texttt{daal} (11), \texttt{pulao} as
+\texttt{chicken\_biryani} (11), \texttt{aloo\_gosht} as \texttt{daal} (10)
+and \texttt{aloo\_gosht} as \texttt{nihari} (9). Many of its errors involve
+stew-like dishes such as haleem, nihari, aloo\_gosht and daal.
+
+\textbf{Failure examples.} Figure~\ref{fig:failures} shows misclassified test
+images from EfficientNet (random sample, seed 42).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{failures_efficientnet.png}
+  \caption{Misclassified test images (EfficientNet-B0), with true and
+  predicted dish in each title.}
+  \label{fig:failures}
+\end{figure}
+
+\textbf{TODO:} add one sentence per example in
+Figure~\ref{fig:failures} (true dish, predicted dish, what the photo shows).
+
+\subsection{Bias check}
+The dataset contains photos of food only and no people, so demographic
+subgroups do not apply. The closest available subgroups are the image
+\emph{source} and \emph{setting} recorded in \texttt{data/processed/split.csv}.
+Table~\ref{tab:subgroups} shows test accuracy by group, from
+\texttt{results/bias\_baseline\_subgroups.csv} and
+\texttt{results/bias\_efficientnet\_subgroups.csv}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l|r|r|r|}
+    \hline
+    \textbf{Group type} & \textbf{Group} & \textbf{Images} &
+    \textbf{Baseline acc.} & \textbf{EfficientNet acc.} \\ \hline
+    Source  & Bing       & 485 & 0.466 & 0.761 \\ \hline
+    Source  & Kaggle     & 156 & 0.641 & 0.917 \\ \hline
+    Setting & home       &  86 & 0.512 & 0.779 \\ \hline
+    Setting & restaurant & 111 & 0.486 & 0.757 \\ \hline
+    Setting & unknown    & 444 & 0.514 & 0.813 \\ \hline
+  \end{tabular}
+  \caption{Test accuracy by source and setting.}
+  \label{tab:subgroups}
+\end{table}
+
+Both models score higher on Kaggle images than on Bing images (EfficientNet
+0.917 versus 0.761). We cannot say why from these results; one possible
+reason is that the Kaggle photos are more uniform, but this was not tested.
+Setting differences are small and mixed, and 444 of the 641 test images
+have setting \texttt{unknown}, so the home and restaurant groups say little.
+We also split test images into dark, medium and bright thirds by brightness.
+EfficientNet accuracy was 0.813, 0.808 and 0.776 and the baseline's was
+0.472, 0.531 and 0.523, so there is no consistent brightness effect.
+
+\textbf{Limits.} The test set has only 641 images, so small groups (for
+example Kaggle with 156 and home with 86) give noisy estimates. Scraped
+images can contain watermarks or wrong labels, and the setting label is
+unknown for most images. These results show where the models differ, not
+proven causes.
+
+\subsection{Comparison}
+EfficientNet-B0 with ImageNet transfer learning reached 0.799 test accuracy
+and 0.779 macro F1, against 0.509 and 0.470 for the from-scratch baseline,
+and it was better on every dish. The pretrained filters already encode
+general shapes and textures, which a small network must learn from fewer
+than 3,000 training images. The baseline was trained once with fixed
+settings and was still improving at epoch 20, so part of the gap may come
+from short training, not only from transfer learning.
 
 % Summary:
 % 1) Describes the from-scratch baseline CNN: layer table, block diagram, loss and optimiser.
