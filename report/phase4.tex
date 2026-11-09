@@ -185,6 +185,7 @@ from the prediction files \texttt{results/preds\_baseline\_test.csv} and
     seekh\_kebab     & 36 & 0.357 & 0.853 \\ \hline
   \end{tabular}
   \caption{Per-dish F1 on the test set.}
+  \label{tab:f1}
 \end{table}
 
 EfficientNet-B0 has a higher F1 than the baseline for every dish. The
@@ -205,8 +206,8 @@ largest gains are for \texttt{haleem} (0.174 to 0.706), \texttt{seekh\_kebab}
 \subsection{Error analysis}
 \textbf{Weakest dishes.} Table~\ref{tab:worst} lists the three dishes with
 the lowest recall (accuracy within the dish) for each model, from
-\texttt{results/bias\_baseline\_class.csv} and
-\texttt{results/bias\_efficientnet\_class.csv}.
+\texttt{results/\allowbreak bias\_\allowbreak baseline\_\allowbreak class.csv} and
+\texttt{results/\allowbreak bias\_\allowbreak efficientnet\_\allowbreak class.csv}.
 
 \begin{table}[H]
   \centering
@@ -224,18 +225,20 @@ the lowest recall (accuracy within the dish) for each model, from
   \label{tab:worst}
 \end{table}
 
+{\sloppy
 \textbf{Confused pairs.} For EfficientNet the most frequent errors
-(\texttt{results/bias\_efficientnet\_confusions.csv}) are \texttt{pulao}
+(\texttt{bias\_\allowbreak efficientnet\_\allowbreak confusions.csv}) are \texttt{pulao}
 predicted as \texttt{chicken\_biryani} (7 images) and
 \texttt{chicken\_biryani} predicted as \texttt{pulao} (6), followed by
 \texttt{chicken\_karahi} as \texttt{aloo\_gosht} (5) and \texttt{samosa} as
 \texttt{paratha\_roll} (5). These look-alike dishes are plausibly confused
 because of similar appearance, though we did not test this. The baseline's
-top errors (\texttt{results/bias\_baseline\_confusions.csv}) are
+top errors (\texttt{results/\allowbreak bias\_\allowbreak baseline\_\allowbreak confusions.csv}) are
 \texttt{haleem} as \texttt{daal} (11), \texttt{pulao} as
 \texttt{chicken\_biryani} (11), \texttt{aloo\_gosht} as \texttt{daal} (10)
 and \texttt{aloo\_gosht} as \texttt{nihari} (9). Many of its errors involve
 stew-like dishes such as haleem, nihari, aloo\_gosht and daal.
+\par}
 
 \textbf{Failure examples.} Figure~\ref{fig:failures} shows misclassified test
 images from EfficientNet (random sample, seed 42).
@@ -279,12 +282,13 @@ These are descriptions of what is visible, not tested explanations of the
 model's errors.
 
 \subsection{Bias check}
+{\sloppy
 The dataset contains photos of food only and no people, so demographic
 subgroups do not apply. The closest available subgroups are the image
 \emph{source} and \emph{setting} recorded in \texttt{data/processed/split.csv}.
 Table~\ref{tab:subgroups} shows test accuracy by group, from
-\texttt{results/bias\_baseline\_subgroups.csv} and
-\texttt{results/bias\_efficientnet\_subgroups.csv}.
+\texttt{results/\allowbreak bias\_\allowbreak baseline\_\allowbreak subgroups.csv} and
+\texttt{results/\allowbreak bias\_\allowbreak efficientnet\_\allowbreak subgroups.csv}.\par}
 
 \begin{table}[H]
   \centering
@@ -305,9 +309,14 @@ Table~\ref{tab:subgroups} shows test accuracy by group, from
 Both models score higher on Kaggle images than on Bing images (EfficientNet
 0.917 versus 0.761). We cannot say why from these results; one possible
 reason is that the Kaggle photos are more uniform, but this was not tested.
+The Kaggle images cover only four dishes (samosa, pakora, daal and paratha
+roll), which are among the best-recognised classes in Table~\ref{tab:f1}
+(EfficientNet F1 0.81 to 0.94), so this gap is partly a dish effect and not a
+clean source effect. We did not compare Bing and Kaggle within the same dish.
 Setting differences are small and mixed, and 444 of the 641 test images
 have setting \texttt{unknown}, so the home and restaurant groups say little.
-We also split test images into dark, medium and bright thirds by brightness.
+We also split test images into dark, medium and bright thirds by brightness
+(rows with group type \texttt{brightness} in the same two subgroup files).
 EfficientNet accuracy was 0.813, 0.808 and 0.776 and the baseline's was
 0.472, 0.531 and 0.523, so there is no consistent brightness effect.
 
