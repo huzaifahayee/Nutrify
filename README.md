@@ -38,10 +38,10 @@ Nutrify/
 │   ├── train.py
 │   ├── tune.py
 │   ├── classes.json
-│   ├── baseline_cnn.py       (Abdullah, in progress)
-│   ├── evaluate.py           (Abdullah, in progress)
-│   └── bias_check.py         (Abdullah, in progress)
-├── results/                  # CSV logs, curves, test predictions
+│   ├── baseline_cnn.py
+│   ├── evaluate.py
+│   └── bias_check.py
+├── results/                  # CSV logs, curves, test predictions, metrics, bias check
 ├── docs/
 │   └── COLAB.md              # running on a Colab T4
 └── report/
@@ -49,7 +49,7 @@ Nutrify/
     ├── phase1.tex
     ├── phase2.tex
     ├── phase3.tex
-    ├── phase4.tex            (Abdullah, in progress)
+    ├── phase4.tex
     ├── contribution.tex
     └── figures/
 ```
@@ -105,7 +105,7 @@ EfficientNet-B0 final run (winning config from `results/hparam_results.csv`, run
 python src/train.py --model efficientnet --data-dir data/processed --epochs 20 --head-epochs 5 --lr 1e-3 --finetune-lr 1e-4 --batch-size 16 --dropout 0.3 --weight-decay 1e-4 --label-smoothing 0.1 --num-workers 2
 ```
 
-Baseline CNN (needs `src/baseline_cnn.py`, Abdullah, in progress):
+Baseline CNN:
 ```bash
 python src/train.py --model baseline --data-dir data/processed --epochs 20 --batch-size 32 --lr 1e-3 --weight-decay 1e-4 --label-smoothing 0.1 --num-workers 2
 ```
@@ -115,8 +115,18 @@ Hyperparameter search (8 one-factor-at-a-time runs, appends to `results/hparam_r
 python src/tune.py --data-dir data/processed --max-epochs 8 --num-workers 2
 ```
 
-Evaluation and bias check: added by Abdullah, commands will be listed here once
-`src/evaluate.py` and `src/bias_check.py` are merged.
+Evaluation (reads `results/preds_<model>_test.csv`, writes `results/metrics_<model>.csv`
+and `results/confusion_<model>.png`; default is both models):
+```bash
+python src/evaluate.py
+python src/evaluate.py --model baseline
+```
+
+Error analysis and bias check (reads the predictions and `data/processed/split.csv`,
+writes `results/bias_<model>_*.csv` and `results/failures_<model>.png`):
+```bash
+python src/bias_check.py --data-dir data/processed
+```
 
 To run on a Colab T4 GPU, follow `docs/COLAB.md`.
 
@@ -126,6 +136,10 @@ To run on a Colab T4 GPU, follow `docs/COLAB.md`.
 | `results/history_<model>.csv` | per-epoch train/val loss and accuracy, learning rate |
 | `results/curves_<model>.png` | loss and accuracy curves |
 | `results/preds_<model>_test.csv` | test-set predictions |
+| `results/metrics_<model>.csv` | per-class precision, recall, F1, AUC-ROC and averages |
+| `results/confusion_<model>.png` | confusion matrix |
+| `results/bias_<model>_class.csv`, `_confusions.csv`, `_subgroups.csv` | error analysis and subgroup accuracy |
+| `results/failures_<model>.png` | misclassified test images |
 | `results/hparam_results.csv` | one row per tuning run |
 | `checkpoints/<model>_best.pt` | best weights (not in Git) |
 
@@ -135,7 +149,7 @@ The predictions CSV has the columns `path`, `true_label`, `pred_label`, then one
 ## Model Weights
 Weights are not committed.
 - EfficientNet-B0: https://drive.google.com/file/d/1x7J9duZSv4HPczMAYuKbfNOB3Q2ELMZE/view?usp=drive_link
-- Baseline CNN: TODO: paste Drive link (from Abdullah)
+- Baseline CNN: https://drive.google.com/file/d/1B23ZUqqSsF5Y-Lpx8tz0Y4CvPFsNLnqp/view?usp=drive_link
 
 Download the file and place it at `checkpoints/<model>_best.pt`
 (for example `checkpoints/efficientnet_best.pt`).
@@ -143,15 +157,13 @@ Download the file and place it at `checkpoints/<model>_best.pt`
 ## Results summary
 | Model | Best val accuracy | Best val loss | Test accuracy | Test macro-F1 | Test AUC-ROC |
 |---|---|---|---|---|---|
-| EfficientNet-B0 | 0.8313 | 1.0688 | 0.7988 | TODO | TODO |
-| Baseline CNN | TODO | TODO | TODO | TODO | TODO |
+| EfficientNet-B0 | 0.8313 | 1.0688 | 0.7988 | 0.7785 | 0.9706 |
+| Baseline CNN | 0.5422 | 1.7605 | 0.5086 | 0.4700 | 0.8915 |
 
-Sources: EfficientNet validation numbers from `results/history_efficientnet.csv`
-(best accuracy and best loss are the maximum and minimum over the 20 epochs);
-test accuracy is 512 of 641 rows with `pred_label` equal to `true_label` in
-`results/preds_efficientnet_test.csv`; macro-F1 and AUC-ROC will come from
-`src/evaluate.py` (Abdullah, in progress); baseline numbers are TODO until the
-baseline run exists.
+Sources: validation numbers from `results/history_<model>.csv` (best accuracy is
+the maximum and best loss the minimum over the 20 epochs); test accuracy, macro-F1
+and AUC-ROC from the accuracy row and the macro avg row of `results/metrics_<model>.csv`
+(AUC-ROC is one-vs-rest).
 
 Tuning winner: `batch_16` (batch size 16, other settings at the default), validation
 loss 1.167360 and validation accuracy 0.792188 in the 8-epoch search

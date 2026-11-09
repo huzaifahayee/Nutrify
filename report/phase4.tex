@@ -248,8 +248,35 @@ images from EfficientNet (random sample, seed 42).
   \label{fig:failures}
 \end{figure}
 
-\textbf{TODO:} add one sentence per example in
-Figure~\ref{fig:failures} (true dish, predicted dish, what the photo shows).
+Reading the figure from left to right, top row first:
+\begin{enumerate}
+  \item True \texttt{haleem}, predicted \texttt{nihari}: a thick orange-brown
+        stew in a glass bowl topped with cashews, fried onions and lime, with
+        a large ``MUTTON HALEEM'' text overlay and a cartoon figure.
+  \item True \texttt{chicken\_tikka}, predicted \texttt{paratha\_roll}: the
+        photo shows flatbreads in a basket with chopped herbs and no visible
+        chicken, so the label does not match the main content.
+  \item True \texttt{chicken\_biryani}, predicted \texttt{pulao}: a plate of
+        brown rice with pieces of meat, green chillies and lemon wedges,
+        which looks like a pulao-style rice dish.
+  \item True \texttt{chicken\_karahi}, predicted \texttt{nihari}: a red-orange
+        curry in a clay pot with dried red chillies and a stock-photo
+        watermark.
+  \item True \texttt{pulao}, predicted \texttt{nihari}: a metal tray with
+        several small bowls (curries, dal, yoghurt), flatbread and papad, and
+        only a small portion of yellow rice.
+  \item True \texttt{haleem}, predicted \texttt{seekh\_kebab}: a close-up of a
+        dark brown, mashed-looking dish topped with almonds, fried onions and
+        mint; no skewers are visible.
+  \item True \texttt{halwa\_puri}, predicted \texttt{daal}: a bowl of yellow
+        dal sits beside a glass dish of flatbreads, and the dal is the most
+        prominent item on the table.
+  \item True \texttt{pulao}, predicted \texttt{chicken\_biryani}: white rice
+        with a chicken piece, herbs and cucumber slices, which is close to how
+        a biryani plate looks.
+\end{enumerate}
+These are descriptions of what is visible, not tested explanations of the
+model's errors.
 
 \subsection{Bias check}
 The dataset contains photos of food only and no people, so demographic

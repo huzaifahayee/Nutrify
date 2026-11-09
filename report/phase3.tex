@@ -56,9 +56,8 @@ contract is the same I/O as EfficientNet: class \texttt{BaselineCNN(num\_classes
 input $3 \times 224 \times 224$, output 14 logits, trained with
 \texttt{python src/train.py --model baseline}.
 
-\textbf{TODO:} file not in the repository yet. Phase 3 cannot list its layers.
-When it lands, describe it here at block level (conv / pool / fully connected)
-without repeating Phase 4 metrics.
+The layer table, block diagram and hyperparameters of the baseline are in
+Phase~4, so they are not repeated here.
 
 \subsection{Loss, optimiser, schedule, regularisation}
 \begin{itemize}
@@ -148,5 +147,4 @@ which is the point of unfreezing the last blocks.
   \label{fig:curves-eff}
 \end{figure}
 
-\textbf{TODO:} include \texttt{curves\_baseline.png} here (or in Phase 4)
-when Abdullah's baseline training has written it.
+The baseline's curves are in Phase~4 (\texttt{results/curves\_baseline.png}).
