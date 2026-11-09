@@ -155,13 +155,14 @@ Download the file and place it at `checkpoints/<model>_best.pt`
 (for example `checkpoints/efficientnet_best.pt`).
 
 ## Results summary
-| Model | Best val accuracy | Best val loss | Test accuracy | Test macro-F1 | Test AUC-ROC |
+| Model | Val accuracy (best-loss epoch) | Best val loss | Test accuracy | Test macro-F1 | Test AUC-ROC |
 |---|---|---|---|---|---|
-| EfficientNet-B0 | 0.8313 | 1.0688 | 0.7988 | 0.7785 | 0.9706 |
+| EfficientNet-B0 | 0.8297 | 1.0688 | 0.7988 | 0.7785 | 0.9706 |
 | Baseline CNN | 0.5422 | 1.7605 | 0.5086 | 0.4700 | 0.8915 |
 
-Sources: validation numbers from `results/history_<model>.csv` (best accuracy is
-the maximum and best loss the minimum over the 20 epochs); test accuracy, macro-F1
+Sources: validation numbers from `results/history_<model>.csv`, taken at the epoch
+with the lowest validation loss (epoch 19 for EfficientNet-B0, epoch 20 for the
+baseline); test accuracy, macro-F1
 and AUC-ROC from the accuracy row and the macro avg row of `results/metrics_<model>.csv`
 (AUC-ROC is one-vs-rest).
 
