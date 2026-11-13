@@ -4,7 +4,9 @@ import UploadZone from "./components/UploadZone.jsx";
 import CameraCapture from "./components/CameraCapture.jsx";
 import ResultCard from "./components/ResultCard.jsx";
 import History from "./components/History.jsx";
-import ThemeToggle from "./components/ThemeToggle.jsx";
+import NavBar from "./components/NavBar.jsx";
+import Hero from "./components/Hero.jsx";
+import { HowItWorks, DishMenu, Footer } from "./components/Sections.jsx";
 
 const MAX_HISTORY = 6;
 
@@ -86,49 +88,54 @@ export default function App() {
   };
 
   return (
-    <div className="shell">
-      <header className="top">
-        <h1 className="brand">Nutrify<small>Know your plate</small></h1>
-        <ThemeToggle theme={theme} onToggle={() => setTheme(theme === "dark" ? "light" : "dark")} />
-      </header>
+    <>
+      <NavBar theme={theme} onToggle={() => setTheme(theme === "dark" ? "light" : "dark")} />
+      <Hero />
 
-      <main className="board">
-        <div>
-          <p className="eyebrow">Your photo</p>
-          {camera ? (
-            <CameraCapture onCapture={onFile} onClose={() => setCamera(false)} />
-          ) : current ? (
-            <div className="photo">
-              <img src={current.url} alt="The photo you uploaded" />
-              <div className="photo-bar">
-                <button className="btn quiet" onClick={reset}>Try another</button>
-                <button className="btn quiet" onClick={() => setCamera(true)}>Use camera</button>
+      <section className="wrap try" id="try">
+        <p className="eyebrow">Try it</p>
+        <h2 className="h2">Show us a plate.</h2>
+        <main className="board">
+          <div>
+            <p className="eyebrow">Your photo</p>
+            {camera ? (
+              <CameraCapture onCapture={onFile} onClose={() => setCamera(false)} />
+            ) : current ? (
+              <div className="photo">
+                <img src={current.url} alt="The photo you uploaded" />
+                <div className="photo-bar">
+                  <button className="btn quiet" onClick={reset}>Try another</button>
+                  <button className="btn quiet" onClick={() => setCamera(true)}>Use camera</button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <UploadZone onFile={onFile} onCamera={() => setCamera(true)} />
-          )}
-        </div>
+            ) : (
+              <UploadZone onFile={onFile} onCamera={() => setCamera(true)} />
+            )}
+          </div>
 
-        <div>
-          <p className="eyebrow">What we found</p>
-          {error && (
-            <div className="alert" role="alert">
-              <span>
-                {error.kind === "network"
-                  ? "Can't reach the Nutrify server. Make sure the backend is running, then try again."
-                  : error.message}
-              </span>
-              {current && error.kind !== "bad-image" && (
-                <button className="btn quiet" onClick={() => run(current, portion)}>Retry</button>
-              )}
-            </div>
-          )}
-          <ResultCard result={result} loading={loading} portion={portion} onPortion={onPortion} />
-        </div>
-      </main>
+          <div>
+            <p className="eyebrow">What we found</p>
+            {error && (
+              <div className="alert" role="alert">
+                <span>
+                  {error.kind === "network"
+                    ? "Can't reach the Nutrify server. Make sure the backend is running, then try again."
+                    : error.message}
+                </span>
+                {current && error.kind !== "bad-image" && (
+                  <button className="btn quiet" onClick={() => run(current, portion)}>Retry</button>
+                )}
+              </div>
+            )}
+            <ResultCard result={result} loading={loading} portion={portion} onPortion={onPortion} />
+          </div>
+        </main>
+        <History items={history} currentId={current?.id} onSelect={onSelectHistory} />
+      </section>
 
-      <History items={history} currentId={current?.id} onSelect={onSelectHistory} />
-    </div>
+      <HowItWorks />
+      <DishMenu />
+      <Footer />
+    </>
   );
 }
