@@ -6,3 +6,8 @@ pandas
 numpy
 pillow
 tqdm
+fastapi
+uvicorn[standard]
+python-multipart
+httpx
+pytest
