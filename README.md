@@ -30,8 +30,13 @@ aloo gosht, seekh kebab, chicken tikka, samosa, pakora, paratha roll, halwa puri
 Nutrify/
 ├── README.md
 ├── .gitignore
-├── requirements.txt          # model training (Phase 3)
+├── requirements.txt          # model training, evaluation and the app backend
 ├── data scripts/             # Phase 2 code, with its own requirements.txt
+├── app/
+│   ├── backend/              # FastAPI: model loading and /predict
+│   └── frontend/             # React (Vite) web app
+├── tests/
+│   └── test_api.py           # backend tests (need the weights file)
 ├── src/
 │   ├── dataset.py
 │   ├── efficientnet_model.py
@@ -40,7 +45,9 @@ Nutrify/
 │   ├── classes.json
 │   ├── baseline_cnn.py
 │   ├── evaluate.py
-│   └── bias_check.py
+│   ├── bias_check.py
+│   ├── calories.py           (Abdullah, in progress)
+│   └── calories.json         (Abdullah, in progress)
 ├── results/                  # CSV logs, curves, test predictions, metrics, bias check
 ├── docs/
 │   └── COLAB.md              # running on a Colab T4
@@ -69,7 +76,7 @@ python eda.py
 
 ## Setup
 Two requirements files:
-- `requirements.txt` (repo root): model training and tuning.
+- `requirements.txt` (repo root): model training and tuning, the app backend and the tests.
 - `data scripts/requirements.txt`: Phase 2 data scripts.
 
 ```bash
@@ -153,6 +160,49 @@ Weights are not committed.
 
 Download the file and place it at `checkpoints/<model>_best.pt`
 (for example `checkpoints/efficientnet_best.pt`).
+
+## Run the app
+The web app has a FastAPI backend and a React frontend. You need the weights at
+`checkpoints/efficientnet_best.pt` (see Model Weights), the Python packages from
+`requirements.txt`, and Node.js 20 or newer with npm.
+
+Terminal 1, from the repo root (backend on port 8000):
+```bash
+uvicorn app.backend.main:app --port 8000
+```
+
+Terminal 2 (frontend on port 5173):
+```bash
+cd app/frontend
+npm install
+npm run dev
+```
+Open http://localhost:5173, drop in a photo or use the camera. In dev mode the
+frontend forwards `/api/...` to the backend.
+
+Backend endpoints:
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /health` | status, number of classes, confidence threshold |
+| `GET /dishes` | the 14 dish names |
+| `POST /predict` | form fields `file` (image, up to 10 MB) and optional `portion` (0.25 to 4, default 1); returns the top 3 dishes, whether the model is confident, and a calorie range |
+
+Example:
+```bash
+curl -F "file=@photo.jpg" -F "portion=1" http://localhost:8000/predict
+```
+
+The app answers "not sure" and shows no calories when the top probability is below
+the confidence threshold. The threshold is read from
+`results/confidence_threshold.json` when that file exists (Abdullah, in progress)
+and defaults to 0.5. Calorie values come from `src/calories.py` (Abdullah, in
+progress); until it exists the calorie block says the data is not available.
+
+Backend tests (they load the weights file):
+```bash
+pytest tests/ -q
+```
 
 ## Results summary
 | Model | Val accuracy (best-loss epoch) | Best val loss | Test accuracy | Test macro-F1 | Test AUC-ROC |
