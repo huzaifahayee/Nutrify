@@ -1,0 +1,35 @@
+/* Nutrify design tokens. Palette is borrowed from a spice shelf:
+   cream paper, chai-dark ink, saffron, cardamom green, chili red. */
+:root,
+:root[data-theme="light"] {
+  --paper: #f5eedf;
+  --card: #fbf7ee;
+  --ink: #2a211a;
+  --muted: #6f5f4f;
+  --line: #ddcfb7;
+  --saffron: #b8690a;
+  --saffron-soft: #f1dfb8;
+  --cardamom: #46633f;
+  --cardamom-soft: #dfe8d2;
+  --chili: #a8321c;
+  --chili-soft: #f2d9d0;
+  --on-saffron: #fffaf0;
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-body: "DM Sans Variable", system-ui, sans-serif;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --paper: #1b1612;
+  --card: #251e18;
+  --ink: #f3eadb;
+  --muted: #b3a38c;
+  --line: #3b3028;
+  --saffron: #e6aa3c;
+  --saffron-soft: #3f3016;
+  --cardamom: #9bc08f;
+  --cardamom-soft: #26301f;
+  --chili: #e9795f;
+  --chili-soft: #3a211b;
+  --on-saffron: #1f1500;
+  color-scheme: dark;
+}
