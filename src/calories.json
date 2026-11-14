@@ -1,0 +1,240 @@
+{
+  "aloo_gosht": {
+    "display_name": "Aloo Gosht",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "chicken_biryani": {
+    "display_name": "Chicken Biryani",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "chicken_karahi": {
+    "display_name": "Chicken Karahi",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "chicken_tikka": {
+    "display_name": "Chicken Tikka",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "daal": {
+    "display_name": "Daal",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "haleem": {
+    "display_name": "Haleem",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "halwa_puri": {
+    "display_name": "Halwa Puri",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "nihari": {
+    "display_name": "Nihari",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "pakora": {
+    "display_name": "Pakora",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "palak_paneer": {
+    "display_name": "Palak Paneer",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "paratha_roll": {
+    "display_name": "Paratha Roll",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "pulao": {
+    "display_name": "Pulao",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "samosa": {
+    "display_name": "Samosa",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  },
+  "seekh_kebab": {
+    "display_name": "Seekh Kebab",
+    "serving": "PLACEHOLDER",
+    "serving_grams": 0,
+    "kcal_low": 0,
+    "kcal_typical": 0,
+    "kcal_high": 0,
+    "method": "TODO",
+    "verified": false,
+    "sources": [
+      {
+        "name": "TODO",
+        "url": "TODO",
+        "note": "TODO"
+      }
+    ]
+  }
+}
