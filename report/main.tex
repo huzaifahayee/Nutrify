@@ -9,7 +9,7 @@
 \graphicspath{{figures/}}
 
 \title{Nutrify: Desi Dish Recognition and Calorie Estimation\\
-\large Deliverable 2 -- Model Architecture and Empirical Evaluation}
+\large Deliverable 3 -- Final System, Evaluation, and Report}
 \author{Muhammad Huzaifa (24L-3019) \and Muhammad Abdullah Rasheed (24L-3002)\\
 Artificial Intelligence, BSE-5B, FAST-NUCES Lahore}
 \date{November 2026}
@@ -25,9 +25,125 @@ Artificial Intelligence, BSE-5B, FAST-NUCES Lahore}
 \input{phase2}
 \input{phase3}
 \input{phase4}
-\input{contribution}
+
+\section{Application and Calorie Module}
+\IfFileExists{phase5_app.tex}{\input{phase5_app}}{}
+\input{phase5_calories}
+
+\section{Discussion and Limitations}
+
+\paragraph{Why samples fail: look-alike dishes.}
+The confusion matrices and per-pair error counts
+(\texttt{results/bias\_efficientnet\_confusions.csv}) show that visual
+similarity between related South Asian preparations is the primary source of
+classification errors. For EfficientNet-B0, the most frequent confusion pair is
+\texttt{pulao} predicted as \texttt{chicken\_biryani} (7 test images) and
+\texttt{chicken\_biryani} predicted as \texttt{pulao} (6 images); both are
+spiced rice dishes served with chicken pieces, herbs, and sliced garnishes, and
+they are reflected in the two lowest per-dish test F1 scores (\texttt{pulao}
+$0.604$, \texttt{chicken\_biryani} $0.649$). Similarly, thick brown or
+red-orange gravies and stews are confused with one another:
+\texttt{chicken\_karahi} as \texttt{aloo\_gosht} (5 images),
+\texttt{aloo\_gosht} as \texttt{nihari} (4), and \texttt{haleem} as
+\texttt{daal} (3). In Figure~\ref{fig:sample-preds}, a plate of
+\texttt{pulao} topped with boiled eggs and green chillies is misclassified as
+\texttt{haleem} (confidence $0.42$), and a multi-dish restaurant spread
+labelled \texttt{chicken\_karahi} is misclassified as \texttt{haleem} ($0.55$).
+
+\paragraph{Watermarks, text overlays, and multi-item plates.}
+As documented in the Section~2 visual audit, web-scraped Bing images frequently
+contain stock-photo watermarks (such as Alamy and Shutterstock), recipe-blog
+collages, YouTube thumbnail banners, or multi-dish thali trays. Several failure
+examples in Figures~\ref{fig:failures} and~\ref{fig:sample-preds} illustrate
+how non-food artefacts and cluttered table scenes affect predictions: a
+\texttt{haleem} image with a large ``MUTTON HALEEM'' text banner and a cartoon
+character is predicted as \texttt{nihari}; a collage image for
+\texttt{aloo\_gosht} receives a correct top-1 label but at only $0.23$
+confidence (below our $0.45$ threshold); and thali or table-spread photos where
+a secondary bowl of dal or flatbread dominates the frame are predicted as the
+more prominent accompaniment rather than the target dish.
+
+\paragraph{Bing versus Kaggle data.}
+In the subgroup evaluation (Table~\ref{tab:subgroups}), EfficientNet-B0 achieves
+$0.917$ accuracy ($0.943$ macro F1) on the 156 Kaggle test images compared with
+$0.761$ accuracy ($0.758$ macro F1) on the 485 Bing test images, and the
+baseline CNN shows a similar gap ($0.641$ versus $0.466$). However, the Kaggle
+subset~\cite{jain_indian_food_kaggle} contributes to only four classes
+(\texttt{samosa}, \texttt{pakora}, \texttt{daal}, and \texttt{paratha\_roll}),
+which have more uniform studio or close-up framing and are also the four
+largest classes after cleaning (422 to 498 images each). Moreover, two Kaggle
+folders are close regional substitutes (\texttt{dal\_makhani} mapped to
+\texttt{daal} and \texttt{kaathi\_rolls} mapped to \texttt{paratha\_roll}). The
+higher Kaggle score therefore reflects a combination of cleaner imagery, larger
+class size, and dish identity rather than a pure source effect.
+
+\paragraph{The baseline gap.}
+Fine-tuning EfficientNet-B0 improves test accuracy by $29.02$ percentage points
+over the from-scratch baseline CNN ($0.7988$ versus $0.5086$) and raises macro
+F1 from $0.4700$ to $0.7785$. Transfer learning from ImageNet~\cite{deng2009imagenet}
+provides rich mid- and high-level texture and shape detectors that a
+392,974-parameter network cannot easily learn from 2,986 training images,
+especially on fine-grained stews such as \texttt{haleem} (F1 $0.706$ versus
+$0.174$). At the same time, part of the gap is attributable to training budget
+and tuning: EfficientNet-B0 benefited from a one-factor hyperparameter search
+(selecting batch size 16) and had converged by epoch 19, whereas the baseline
+CNN was trained once with fixed hyperparameters (batch size 32, learning rate
+$10^{-3}$) and its validation loss ($1.7605$) and validation accuracy ($0.5422$)
+were still improving at epoch 20.
+
+\paragraph{What the 14-class limit and recipe estimates mean in practice.}
+Nutrify is a closed-set 14-class system. Any uploaded photo is projected onto
+the 14 dish logits; while the $0.45$ validation-selected confidence threshold
+raises accuracy on accepted test images to $0.8727$ (at $0.8456$ coverage) and
+blocks 4 of 6 non-dish test photos as \texttt{Not sure}, two non-dish selfies
+still crossed the threshold at $0.45$ and $0.58$ confidence and were labelled
+\texttt{Samosa}. Likewise, the calorie module provides deterministic,
+traceable recipe estimates from IFCT 2017~\cite{longvah2017ifct} and UK
+CoFID~\cite{cofid2021} rather than laboratory measurements of the user's plate,
+and relies on user-selected portion multipliers rather than estimating 3D food
+volume from the image.
+
+\section{Conclusion}
+Nutrify demonstrates an end-to-end pipeline for recognising 14 South Asian
+dishes from a single photograph and returning a transparent, recipe-based
+calorie range. Starting from 6,193 raw images collected from Bing and Kaggle,
+automated deduplication and quality checks produced 4,267 cleaned images split
+70/15/15 into training, validation, and test sets. Fine-tuning an
+ImageNet-pretrained EfficientNet-B0 in two stages achieved 0.7988 test
+accuracy, 0.7785 macro F1, and 0.9706 macro AUC-ROC on the 641-image test set,
+substantially outperforming a 392,974-parameter CNN trained from scratch
+(0.5086 accuracy, 0.4700 macro F1). Pairing the classifier with a 0.45
+confidence threshold selected on validation data improved test accuracy on
+accepted predictions to 0.8727 across 84.56\% of test images while flagging
+uncertain or out-of-distribution inputs as ``Not sure,'' and our deterministic
+calorie lookup grounds per-serving low, typical, and high calorie ranges in
+IFCT 2017~\cite{longvah2017ifct} and UK CoFID~\cite{cofid2021} ingredient
+values.
+
+Several practical directions remain for future work:
+\begin{itemize}
+  \item \textbf{Expanding dish coverage and open-set rejection:} Adding
+        everyday accompaniments and regional dishes (such as chapati, naan,
+        raita, chana masala, and desserts) alongside a dedicated background or
+        out-of-distribution detector so non-food and unrecognised dishes are
+        rejected reliably rather than relying only on top-1 softmax confidence.
+  \item \textbf{Portion estimation from the photo:} Replacing manual portion
+        multipliers with automated volume or area estimation, for example using
+        segmentation masks combined with a reference object (such as a standard
+        plate or spoon) or monocular depth estimation.
+  \item \textbf{Cleaner training data and laboratory-verified recipes:}
+        Filtering watermarked and text-banner Bing images with OCR, collecting
+        more balanced real-world camera photos, and validating cooked dish
+        energy and cooking yield factors against Pakistani recipes.
+  \item \textbf{Cloud deployment and mobile access:} Hosting the FastAPI
+        backend and quantized EfficientNet-B0 weights on a public cloud service
+        with persistent meal logging so users can access Nutrify directly from
+        mobile browsers.
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{references}
+
+\input{contribution}
 
 \end{document}

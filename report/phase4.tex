@@ -1,11 +1,9 @@
-% Phase 4 -- written by Abdullah
-% Every number comes from a file under results/ or from src/baseline_cnn.py.
-\section{Phase 4: Training, Evaluation and Bias Check}
+\section{Training and Evaluation}
 
 \subsection{Baseline CNN design}
 The baseline is a small convolutional network trained from scratch
 (\texttt{src/baseline\_cnn.py}, class \texttt{BaselineCNN}). It is the
-reference point for the pretrained EfficientNet-B0. It takes a
+reference point for the pretrained EfficientNet-B0~\cite{tan2019efficientnet}. It takes a
 $3 \times 224 \times 224$ image and returns 14 logits (no softmax inside the
 model). It has four convolution blocks, each made of a $3 \times 3$
 convolution (padding 1), batch normalisation, ReLU and $2 \times 2$ max
@@ -63,13 +61,13 @@ dropout ($0.3$) and one linear layer follow. The model has
 \end{figure}
 
 The loss is cross-entropy with label smoothing $0.1$. The optimiser is
-AdamW with a cosine-annealing learning-rate schedule. These are the same
-settings as for EfficientNet, because both models use the shared trainer
-\texttt{src/train.py}.
+AdamW~\cite{loshchilov2019adamw} with a cosine-annealing learning-rate schedule.
+These are the same settings as for EfficientNet, because both models use the
+shared trainer \texttt{src/train.py}.
 
 \subsection{Baseline hyperparameters}
 The baseline was trained \textbf{once} with fixed values. It was not tuned.
-The EfficientNet hyperparameter search is described in Phase 3.
+The EfficientNet hyperparameter search is described in Section~3.
 
 \begin{table}[H]
   \centering
@@ -89,19 +87,20 @@ The EfficientNet hyperparameter search is described in Phase 3.
 \end{table}
 
 \subsection{Validation strategy}
-We use the 70/15/15 stratified train/validation/test split made in Phase 2
+We use the 70/15/15 stratified train/validation/test split made in Section~2
 (seed 42), which gives 2,986 training, 640 validation and 641 test images.
 The validation set is used during training for early stopping and for
 choosing the best checkpoint. The test set is used once, at the end, to
 produce the predictions evaluated below. We did not use K-fold
-cross-validation: the held-out test set is fixed from Phase 2, and
+cross-validation: the held-out test set is fixed from Section~2, and
 repeated training of the EfficientNet model would be costly.
 
 \subsection{Training curves}
 Figure~\ref{fig:curves-baseline} shows the baseline's loss and accuracy per
 epoch. Over the 20 epochs the validation loss fell to $1.7605$ and
 validation accuracy rose to $0.5422$, while training accuracy reached
-$0.5271$ (\texttt{results/history\_baseline.csv}). Both curves were still
+$0.5271$ at epoch 20 and peaked at $0.5285$ at epoch 19
+(\texttt{results/history\_baseline.csv}). Both curves were still
 improving at epoch 20, so the baseline is probably under-trained; with
 fixed settings and a single run we did not train it for longer. Training
 accuracy stays close to validation accuracy, so there is no strong sign
@@ -114,13 +113,17 @@ of over-fitting.
   \label{fig:curves-baseline}
 \end{figure}
 
-Figure~\ref{fig:curves-efficientnet} shows the EfficientNet-B0 curves.
-In the last epoch (epoch 20, fine-tuning stage) EfficientNet-B0 reached a
-training accuracy of $0.9411$ and a validation accuracy of $0.8219$, with a
-validation loss of $1.0809$ (\texttt{results/history\_efficientnet.csv}). The
-gap of about 12 points between training and validation accuracy points to
-some over-fitting, whereas the baseline's two accuracies stayed close
-together. The losses stay well above zero partly because of label smoothing.
+Figure~\ref{fig:curves-efficientnet} shows the EfficientNet-B0 curves
+(final 20-epoch run, batch size 16). The dashed vertical line marks epoch 6,
+where the last three backbone blocks are unfrozen for fine-tuning. Both curves
+improve sharply after unfreezing. Best validation loss is reached at epoch 19
+(validation loss $1.0688$, validation accuracy $0.8297$, training accuracy
+$0.9401$), and in epoch 20 the model reaches a training accuracy of $0.9411$
+and a validation accuracy of $0.8219$ with a validation loss of $1.0809$
+(\texttt{results/history\_efficientnet.csv}). The gap of about 11 to 12
+percentage points between training and validation accuracy points to moderate
+over-fitting, whereas the baseline's two accuracies stayed close together. The
+losses stay well above zero partly because of label smoothing ($0.1$).
 
 \begin{figure}[H]
   \centering
@@ -129,9 +132,9 @@ together. The losses stay well above zero partly because of label smoothing.
   \label{fig:curves-efficientnet}
 \end{figure}
 \subsection{Evaluation metrics and why they fit}
-The 14 classes are imbalanced (Phase 2): \texttt{palak\_paneer} has 187
+The 14 classes are imbalanced (Section~2): \texttt{palak\_paneer} has 187
 images and \texttt{samosa} 498. Accuracy alone can hide weak classes, so we
-also report:
+also report (computed with scikit-learn~\cite{pedregosa2011sklearn}):
 \begin{itemize}
   \item \textbf{Precision and recall per dish}: precision says how often a
         predicted dish is right, recall says how many true images of a dish
@@ -326,16 +329,23 @@ images can contain watermarks or wrong labels, and the setting label is
 unknown for most images. These results show where the models differ, not
 proven causes.
 
-\subsection{Comparison}
-EfficientNet-B0 with ImageNet transfer learning reached 0.799 test accuracy
-and 0.779 macro F1, against 0.509 and 0.470 for the from-scratch baseline,
-and it was better on every dish. The pretrained filters already encode
-general shapes and textures, which a small network must learn from fewer
-than 3,000 training images. The baseline was trained once with fixed
-settings and was still improving at epoch 20, so part of the gap may come
-from short training, not only from transfer learning.
+\subsection{Comparison and Sample Predictions}
+EfficientNet-B0 with ImageNet transfer learning reached $0.7988$ test accuracy
+and $0.7785$ macro F1, against $0.5086$ and $0.4700$ for the from-scratch
+baseline, and it achieved a higher F1 on every single dish. Figure~\ref{fig:sample-preds}
+shows a $3 \times 4$ grid of test-set predictions from EfficientNet-B0
+(\texttt{report/figures/sample\_predictions.png}, generated by
+\texttt{src/sample\_predictions.py} with 8 correct and 4 misclassified test
+images sampled using \texttt{random.seed(42)}). Each tile displays the ground
+truth, the predicted dish, and the top-1 softmax confidence, coloured green
+for correct predictions and red for errors.
 
-% Summary:
-% 1) Describes the from-scratch baseline CNN: layer table, block diagram, loss and optimiser.
-% 2) Lists the fixed baseline hyperparameters with a short reason each, and the 70/15/15 split.
-% 3) Shows both training-curve figures, with baseline numbers taken from history_baseline.csv.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{sample_predictions.png}
+  \caption{Sample test-set predictions from EfficientNet-B0
+  (\texttt{report/figures/sample\_predictions.png}): 8 correct (green) and 4
+  misclassified (red) test images sampled with seed 42, showing true dish,
+  predicted dish, and top-1 confidence.}
+  \label{fig:sample-preds}
+\end{figure}
