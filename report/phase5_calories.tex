@@ -1,0 +1,201 @@
+\subsection{Calorie Estimation Module}
+
+Pakistan currently lacks an up-to-date national food composition table for
+cooked composite dishes~\cite{soomro2024matiari}. Rather than training a black-box
+regressor to guess calories from pixels, Nutrify maps each recognised dish
+through \texttt{src/calories.py} and \texttt{src/calories.json} to a
+deterministic per-serving calorie range (low, typical, and high), which is
+scaled linearly by the user's selected portion multiplier.
+
+\paragraph{How each range was obtained.}
+Because standard food composition tables list raw ingredients rather than
+prepared Pakistani dishes, we constructed recipe-based estimates for one
+standard serving of each of the 14 dishes. Primary ingredient energies are
+taken from Table~1 of the Indian Food Composition Tables 2017 (IFCT
+2017)~\cite{longvah2017ifct}, converted from kilojoules to kilocalories using
+$1\text{ kJ} = 0.239\text{ kcal}$ (IFCT computes metabolisable energy using
+Atwater factors, General Information, pp.~xxi--xxii). Cooking fats, dairy, and
+other staple items not listed in the same form in IFCT (sunflower oil T508 at
+$899\text{ kcal/100 g}$, butter ghee T506 at $878\text{ kcal/100 g}$, whole-milk
+plain yogurt L520 at $79\text{ kcal/100 g}$, white sugar I502 at
+$394\text{ kcal/100 g}$, gram flour A504 at $353\text{ kcal/100 g}$, and fresh
+single cream L519 at $193\text{ kcal/100 g}$) are taken from McCance and
+Widdowson's Composition of Foods Integrated Dataset (CoFID)~\cite{cofid2021},
+as compiled in the open-access Indian Nutrient Databank
+(INDB)~\cite{vijayakumar2024indb}.
+
+For each dish, the \emph{typical} value sums the edible ingredient energies for
+a home-style or standard restaurant serving, rounded to the nearest
+$5\text{ kcal}$. Spices, salt, water, and light garnishes contribute negligible
+energy and are omitted; cooking changes moisture content rather than total
+energy, and frying oil is counted as the estimated amount absorbed or eaten
+rather than the full pan volume. The \emph{low} and \emph{high} values
+represent a leaner recipe version (less oil or ghee and leaner meat cuts, such
+as skinless chicken breast N003 at $168\text{ kcal/100 g}$ or goat legs O003 at
+$160\text{ kcal/100 g}$) and a richer recipe version (more oil or ghee, fattier
+cuts such as chicken thigh N002 at $200\text{ kcal/100 g}$ or beef shoulder
+O025 at $212\text{ kcal/100 g}$, and a larger main-ingredient portion).
+Table~\ref{tab:calories} lists the 14 dishes, their standard serving
+descriptions, and their low, typical, and high kilocalorie values from
+\texttt{src/calories.json}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|l|r|r|r|}
+    \hline
+    \textbf{Dish} & \textbf{Standard serving} & \textbf{Low (kcal)} & \textbf{Typical (kcal)} & \textbf{High (kcal)} \\
+    \hline
+    Aloo Gosht (\texttt{aloo\_gosht}) & 1 bowl (about 300 g) & 355 & 540 & 700 \\
+    Chicken Biryani (\texttt{chicken\_biryani}) & 1 plate (about 350 g) & 610 & 845 & 1080 \\
+    Chicken Karahi (\texttt{chicken\_karahi}) & 1 bowl (about 250 g) & 385 & 580 & 770 \\
+    Chicken Tikka (\texttt{chicken\_tikka}) & 4 pieces (about 150 g cooked) & 320 & 400 & 515 \\
+    Daal (\texttt{daal}) & 1 bowl (about 250 g) & 195 & 295 & 405 \\
+    Haleem (\texttt{haleem}) & 1 bowl (about 300 g) & 365 & 600 & 835 \\
+    Halwa Puri (\texttt{halwa\_puri}) & 2 puri, 1 small bowl halwa, a little chana (about 250 g) & 620 & 810 & 1085 \\
+    Nihari (\texttt{nihari}) & 1 bowl (about 300 g) & 340 & 585 & 800 \\
+    Pakora (\texttt{pakora}) & 6 pieces (about 100 g) & 210 & 295 & 405 \\
+    Palak Paneer (\texttt{palak\_paneer}) & 1 bowl (about 250 g) & 235 & 355 & 495 \\
+    Paratha Roll (\texttt{paratha\_roll}) & 1 roll (about 200 g) & 410 & 545 & 710 \\
+    Pulao (\texttt{pulao}) & 1 plate (about 300 g) & 420 & 560 & 715 \\
+    Samosa (\texttt{samosa}) & 2 samosas (about 130 g) & 305 & 405 & 510 \\
+    Seekh Kebab (\texttt{seekh\_kebab}) & 2 kebabs (about 120 g cooked) & 195 & 315 & 400 \\
+    \hline
+  \end{tabular}
+  \caption{Per-serving calorie estimates for the 14 dishes, from \texttt{src/calories.json}.}
+  \label{tab:calories}
+\end{table}
+
+\subsection{Confidence Threshold and Non-Dish Check}
+
+Because a 14-way softmax layer always assigns probabilities that sum to $1$,
+the classifier will output a dish name even when given a blurry photo, an
+ambiguous dish, or an image that does not contain food at all. To prevent the
+application from presenting low-confidence guesses as definite answers,
+\texttt{src/confidence\_analysis.py} selects a rejection threshold $\tau$ on
+the 640-image validation set. When the top softmax probability falls below
+$\tau$, the application returns \texttt{"Not sure"} and withholds the primary
+dish decision while still showing the top guesses for transparency.
+
+\paragraph{Validation sweep and test evaluation.}
+We swept $\tau$ from $0.30$ to $0.90$ in steps of $0.05$ on the validation set
+(\texttt{results/confidence\_val.csv}) and applied the selection rule: choose
+the smallest threshold achieving at least $0.90$ accuracy on accepted images
+while keeping coverage at or above $0.50$. Table~\ref{tab:confidence-val}
+shows the full validation sweep. The smallest qualifying threshold is
+$\tau = 0.45$ (\texttt{results/confidence\_threshold.json}), which achieves
+$0.9173$ validation accuracy at $0.8313$ coverage. Applied once to the 641
+held-out test predictions (\texttt{results/confidence\_test.csv}),
+$\tau = 0.45$ yields a test coverage of \textbf{0.8456} and raises test
+accuracy on accepted images from $0.7988$ (unthresholded) to \textbf{0.8727}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|r|r|r|}
+    \hline
+    \textbf{Threshold ($\tau$)} & \textbf{Val.\ coverage} & \textbf{Val.\ accuracy (accepted)} \\
+    \hline
+    0.30 & 0.9375 & 0.8717 \\
+    0.35 & 0.9078 & 0.8847 \\
+    0.40 & 0.8750 & 0.8964 \\
+    \textbf{0.45} & \textbf{0.8313} & \textbf{0.9173} \\
+    0.50 & 0.7828 & 0.9301 \\
+    0.55 & 0.7469 & 0.9393 \\
+    0.60 & 0.7109 & 0.9560 \\
+    0.65 & 0.6781 & 0.9608 \\
+    0.70 & 0.6312 & 0.9653 \\
+    0.75 & 0.5828 & 0.9705 \\
+    0.80 & 0.5078 & 0.9815 \\
+    0.85 & 0.4250 & 0.9890 \\
+    0.90 & 0.3172 & 0.9951 \\
+    \hline
+  \end{tabular}
+  \caption{Validation coverage and accuracy on accepted images across candidate
+  thresholds (\texttt{results/confidence\_val.csv}). Bold marks the selected
+  threshold $\tau = 0.45$, which achieves $0.8456$ coverage and $0.8727$
+  accuracy on the test set (\texttt{results/confidence\_test.csv}).}
+  \label{tab:confidence-val}
+\end{table}
+
+\paragraph{Informal non-dish check.}
+To see how the threshold behaves on out-of-distribution inputs, we ran an
+informal check on 6 non-dish photos (\texttt{results/non\_dish\_check.csv}),
+shown in Table~\ref{tab:non-dish}. Because there are only 6 images, this is a
+qualitative sanity check rather than a statistical benchmark. Four of the 6
+images had top softmax confidence between $0.25$ and $0.35$ and were correctly
+rejected as \texttt{Not sure}. The remaining two images (a selfie in a grey
+T-shirt with a phone at $0.45$ and a selfie in a grey T-shirt at $0.58$) met or
+exceeded the $0.45$ threshold and were wrongly accepted as \texttt{Samosa}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|l|}
+    \hline
+    \textbf{Image description} & \textbf{Top confidence} & \textbf{App answer ($\tau = 0.45$)} \\
+    \hline
+    face photo blue shirt & 0.30 & Not sure \\
+    Nike logo & 0.35 & Not sure \\
+    screen with code & 0.25 & Not sure \\
+    selfie grey T-shirt with phone & 0.45 & Samosa \\
+    selfie grey T-shirt & 0.58 & Samosa \\
+    selfie flexing & 0.33 & Not sure \\
+    \hline
+  \end{tabular}
+  \caption{Informal check on 6 non-dish images (\texttt{results/non\_dish\_check.csv}).}
+  \label{tab:non-dish}
+\end{table}
+
+\subsection{Calorie and Threshold Limitations}
+
+Several methodological limitations apply to the calorie estimates and the
+confidence filter:
+\begin{itemize}
+  \item \textbf{Recipe estimates, not measurements:} All values in
+        \texttt{src/calories.json} are recipe-based calculations from food
+        composition tables, not bomb-calorimetry measurements of the photographed
+        meal, and they are for general informational use rather than medical or
+        clinical dietary advice.
+  \item \textbf{Assumed serving sizes and unmeasured portions:} The standard
+        serving weight and every ingredient weight in a recipe are fixed
+        assumptions. The system does not detect food volume, depth, or plate
+        scale from the photo; portion adjustments rely entirely on the user's
+        chosen multiplier.
+  \item \textbf{Lean and rich recipes, not statistical intervals:} The
+        \texttt{kcal\_low} and \texttt{kcal\_high} bounds represent a lean recipe
+        variant (less oil or ghee, leaner meat cut) and a rich recipe variant
+        (more oil or ghee, fattier cut, larger main-ingredient weight), not
+        statistical confidence intervals or standard deviations across kitchens.
+  \item \textbf{Cooked poultry weights in IFCT 2017:} IFCT 2017 reports nutrient
+        values for raw edible foods \emph{except} for poultry and egg (General
+        Information, p.~xx). Accordingly, the chicken weights in our recipes
+        (\texttt{chicken\_biryani}, \texttt{chicken\_karahi},
+        \texttt{chicken\_tikka}, \texttt{paratha\_roll}, and \texttt{pulao})
+        refer to cooked boneless skinless chicken breast (N003,
+        $168\text{ kcal/100 g}$) or thigh (N002, $200\text{ kcal/100 g}$),
+        whereas red meat, grains, pulses, and vegetables are entered as raw
+        edible weights.
+  \item \textbf{Omission of IFCT ``chicken, leg, skinless'':} The IFCT 2017
+        entry for skinless chicken leg reports an energy of about
+        $384\text{ kcal/100 g}$, which is inconsistent with its own reported
+        protein and fat content under Atwater conversion; we therefore excluded
+        that entry and used only breast (N003) and thigh (N002).
+  \item \textbf{Why INDB cooked-dish totals were used only as a cross-check:}
+        The Indian Nutrient Databank~\cite{vijayakumar2024indb} includes
+        calculated recipes for several Indian dishes (for example Mutton biryani
+        ASC122 at $396\text{ kcal}$ per plate, Dal makhani OSR139 at
+        $262\text{ kcal}$ per bowl, Spinach paneer ASC215 at $230\text{ kcal}$
+        per bowl, and Plain pulao ASC114 at $432\text{ kcal}$ per plate). We did
+        not adopt INDB's cooked-dish totals directly because INDB counts all
+        frying oil in a recipe as consumed and does not apply cooking yield
+        factors; we used INDB only to source UK CoFID~\cite{cofid2021}
+        ingredient values and as a sanity cross-check.
+  \item \textbf{Closed-set classifier and imperfect rejection:} Because the
+        network is trained strictly on 14 classes, it always picks one of those
+        14 dishes. The $0.45$ confidence threshold catches most uncertain or
+        non-dish photos (4 of 6 in our informal check), but out-of-distribution
+        images can still produce a softmax peak at or above $0.45$ and be
+        accepted as one of the 14 dishes.
+\end{itemize}
+

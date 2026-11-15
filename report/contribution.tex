@@ -1,7 +1,6 @@
-% Contribution Table -- names match git log --format='%an'
 \section{Contribution Table}
 
-Git author names below are taken from \texttt{git log}.
+Git author names below are taken from \texttt{git shortlog -sn}.
 
 \begin{table}[H]
   \centering
@@ -12,26 +11,34 @@ Git author names below are taken from \texttt{git log}.
     \hline
     Muhammad Huzaifa (24L-3019)
       & Muhammad Huzaifa
-      & Data collection scripts (Phase 1);
-        Phase 1 report;
+      & Data collection scripts (\texttt{collect\_images.py}, \texttt{config.py});
+        Introduction / problem definition (\texttt{report/phase1.tex});
         \texttt{src/dataset.py};
         \texttt{src/efficientnet\_model.py};
         \texttt{src/train.py};
         \texttt{src/tune.py};
         \texttt{docs/COLAB.md};
-        Phase 3 report;
-        README. \\
+        Models section (\texttt{report/phase3.tex});
+        FastAPI backend (\texttt{app/backend/});
+        React frontend (\texttt{app/frontend/});
+        API tests (\texttt{tests/test\_api.py});
+        Application report section (\texttt{report/phase5\_app.tex});
+        \texttt{README.md}. \\
     \hline
     Muhammad Abdullah Rasheed (24L-3002)
       & Muhammad Abdullah Rasheed
-      & Cleaning, preprocessing and EDA scripts;
-        Phase 2 report;
+      & Dataset import, cleaning, preprocessing and EDA scripts (\texttt{import\_dataset.py}, \texttt{clean\_data.py}, \texttt{preprocess.py}, \texttt{eda.py});
+        Data section (\texttt{report/phase2.tex});
         \texttt{src/baseline\_cnn.py};
         \texttt{src/evaluate.py};
         \texttt{src/bias\_check.py};
-        Phase 4 report. \\
+        Training and evaluation section (\texttt{report/phase4.tex});
+        Calorie module, recipe database and unit tests (\texttt{src/calories.py}, \texttt{src/calories.json}, \texttt{tests/test\_calories.py});
+        Confidence threshold analysis and non-dish check (\texttt{src/confidence\_analysis.py}, \texttt{results/confidence\_*.csv}, \texttt{results/non\_dish\_check.csv});
+        Sample predictions figure (\texttt{src/sample\_predictions.py}, \texttt{report/figures/sample\_predictions.png});
+        Calorie module report section, abstract, bibliography, discussion and final cohesive report (\texttt{report/phase5\_calories.tex}, \texttt{report/abstract.tex}, \texttt{report/references.bib}, \texttt{report/main.tex}). \\
     \hline
   \end{tabular}
   \caption{Who implemented which modules. Git history is the source of truth
-  for code already in the repository.}
+  for code in the repository.}
 \end{table}
