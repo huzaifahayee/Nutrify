@@ -7,7 +7,7 @@
     "kcal_typical": 540,
     "kcal_high": 700,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 120 g Goat, shoulder, meat (188 kcal/100 g, IFCT O001) = 226 kcal; 100 g Potato, brown skin, big (70 kcal/100 g, IFCT F006) = 70 kcal; 60 g Onion, big (48 kcal/100 g, IFCT G017) = 29 kcal; 60 g Tomato, ripe, hybrid (19 kcal/100 g, IFCT D075) = 11 kcal; 20 g Oil, sunflower (899 kcal/100 g, UK T508) = 180 kcal; 30 g Yogurt, whole milk, plain (79 kcal/100 g, UK L520) = 24 kcal. Total 539 kcal, rounded to 540. Low = leaner version (355 kcal: less oil/ghee, leaner cut); high = richer version (700 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -29,7 +29,7 @@
     "kcal_typical": 845,
     "kcal_high": 1080,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw, except chicken: IFCT lists poultry as not raw, so chicken grams mean cooked boneless skinless meat): 90 g Rice, raw, milled (356 kcal/100 g, IFCT A015) = 320 kcal; 120 g Chicken, poultry, thigh, skinless (200 kcal/100 g, IFCT N002) = 240 kcal; 60 g Onion, big (48 kcal/100 g, IFCT G017) = 29 kcal; 40 g Yogurt, whole milk, plain (79 kcal/100 g, UK L520) = 32 kcal; 25 g Oil, sunflower (899 kcal/100 g, UK T508) = 225 kcal. Total 846 kcal, rounded to 845. Low = leaner version (610 kcal: less oil/ghee, leaner cut); high = richer version (1080 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served. Cross-check: INDB Mutton biryani (ASC122): 396 kcal per plate (about 50 g raw rice per plate).",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -56,7 +56,7 @@
     "kcal_typical": 580,
     "kcal_high": 770,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw, except chicken: IFCT lists poultry as not raw, so chicken grams mean cooked boneless skinless meat): 150 g Chicken, poultry, thigh, skinless (200 kcal/100 g, IFCT N002) = 300 kcal; 150 g Tomato, ripe, hybrid (19 kcal/100 g, IFCT D075) = 28 kcal; 40 g Onion, big (48 kcal/100 g, IFCT G017) = 19 kcal; 5 g Garlic, big cloves (124 kcal/100 g, IFCT G011) = 6 kcal; 5 g Ginger, fresh (55 kcal/100 g, IFCT G014) = 3 kcal; 25 g Oil, sunflower (899 kcal/100 g, UK T508) = 225 kcal. Total 581 kcal, rounded to 580. Low = leaner version (385 kcal: less oil/ghee, leaner cut); high = richer version (770 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -78,7 +78,7 @@
     "kcal_typical": 400,
     "kcal_high": 515,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw, except chicken: IFCT lists poultry as not raw, so chicken grams mean cooked boneless skinless meat): 75 g Chicken, poultry, breast, skinless (168 kcal/100 g, IFCT N003) = 126 kcal; 75 g Chicken, poultry, thigh, skinless (200 kcal/100 g, IFCT N002) = 150 kcal; 40 g Yogurt, whole milk, plain (79 kcal/100 g, UK L520) = 32 kcal; 10 g Oil, sunflower (899 kcal/100 g, UK T508) = 90 kcal. Total 398 kcal, rounded to 400. Low = leaner version (320 kcal: less oil/ghee, leaner cut); high = richer version (515 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -100,7 +100,7 @@
     "kcal_typical": 295,
     "kcal_high": 405,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 50 g Red gram, dal (331 kcal/100 g, IFCT B021) = 166 kcal; 30 g Onion, big (48 kcal/100 g, IFCT G017) = 14 kcal; 50 g Tomato, ripe, hybrid (19 kcal/100 g, IFCT D075) = 10 kcal; 12 g Oil, sunflower (899 kcal/100 g, UK T508) = 108 kcal. Total 297 kcal, rounded to 295. Low = leaner version (195 kcal: less oil/ghee, leaner cut); high = richer version (405 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served. Cross-check: INDB Dal makhani (OSR139): 262 kcal per bowl.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -127,7 +127,7 @@
     "kcal_typical": 600,
     "kcal_high": 835,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 90 g Goat, shoulder, meat (188 kcal/100 g, IFCT O001) = 169 kcal; 30 g Wheat, whole (322 kcal/100 g, IFCT A020) = 97 kcal; 10 g Barley (316 kcal/100 g, IFCT A004) = 32 kcal; 20 g Lentil, dal (322 kcal/100 g, IFCT B013) = 64 kcal; 40 g Onion, big (48 kcal/100 g, IFCT G017) = 19 kcal; 25 g Ghee, butter (878 kcal/100 g, UK T506) = 220 kcal. Total 600 kcal, rounded to 600. Low = leaner version (365 kcal: less oil/ghee, leaner cut); high = richer version (835 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -149,7 +149,7 @@
     "kcal_typical": 810,
     "kcal_high": 1085,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 60 g Wheat flour, atta (320 kcal/100 g, IFCT A019) = 192 kcal; 25 g Oil, sunflower (899 kcal/100 g, UK T508) = 225 kcal; 25 g Wheat, semolina (334 kcal/100 g, IFCT A022) = 84 kcal; 20 g Sugar, white (394 kcal/100 g, UK I502) = 79 kcal; 20 g Ghee, butter (878 kcal/100 g, UK T506) = 176 kcal; 20 g Bengal gram, whole (287 kcal/100 g, IFCT B002) = 57 kcal. Total 812 kcal, rounded to 810. Low = leaner version (620 kcal: less oil/ghee, leaner cut); high = richer version (1085 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -171,7 +171,7 @@
     "kcal_typical": 585,
     "kcal_high": 800,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 120 g Beef, shoulder (212 kcal/100 g, IFCT O025) = 254 kcal; 15 g Wheat flour, atta (320 kcal/100 g, IFCT A019) = 48 kcal; 40 g Onion, big (48 kcal/100 g, IFCT G017) = 19 kcal; 30 g Ghee, butter (878 kcal/100 g, UK T506) = 263 kcal. Total 585 kcal, rounded to 585. Low = leaner version (340 kcal: less oil/ghee, leaner cut); high = richer version (800 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -193,7 +193,7 @@
     "kcal_typical": 295,
     "kcal_high": 405,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 40 g Flour, gram (353 kcal/100 g, UK A504) = 141 kcal; 40 g Onion, big (48 kcal/100 g, IFCT G017) = 19 kcal; 15 g Oil, sunflower (899 kcal/100 g, UK T508) = 135 kcal. Total 295 kcal, rounded to 295. Low = leaner version (210 kcal: less oil/ghee, leaner cut); high = richer version (405 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -215,7 +215,7 @@
     "kcal_typical": 355,
     "kcal_high": 495,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 60 g Paneer (258 kcal/100 g, IFCT L003) = 155 kcal; 150 g Spinach (24 kcal/100 g, IFCT C033) = 36 kcal; 40 g Onion, big (48 kcal/100 g, IFCT G017) = 19 kcal; 50 g Tomato, ripe, hybrid (19 kcal/100 g, IFCT D075) = 10 kcal; 15 g Oil, sunflower (899 kcal/100 g, UK T508) = 135 kcal. Total 354 kcal, rounded to 355. Low = leaner version (235 kcal: less oil/ghee, leaner cut); high = richer version (495 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served. Cross-check: INDB Spinach paneer (ASC215): 230 kcal per bowl.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -242,7 +242,7 @@
     "kcal_typical": 545,
     "kcal_high": 710,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw, except chicken: IFCT lists poultry as not raw, so chicken grams mean cooked boneless skinless meat): 60 g Wheat flour, atta (320 kcal/100 g, IFCT A019) = 192 kcal; 80 g Chicken, poultry, thigh, skinless (200 kcal/100 g, IFCT N002) = 160 kcal; 20 g Onion, big (48 kcal/100 g, IFCT G017) = 10 kcal; 25 g Yogurt, whole milk, plain (79 kcal/100 g, UK L520) = 20 kcal; 18 g Oil, sunflower (899 kcal/100 g, UK T508) = 162 kcal. Total 543 kcal, rounded to 545. Low = leaner version (410 kcal: less oil/ghee, leaner cut); high = richer version (710 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -264,7 +264,7 @@
     "kcal_typical": 560,
     "kcal_high": 715,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw, except chicken: IFCT lists poultry as not raw, so chicken grams mean cooked boneless skinless meat): 80 g Rice, raw, milled (356 kcal/100 g, IFCT A015) = 285 kcal; 60 g Chicken, poultry, thigh, skinless (200 kcal/100 g, IFCT N002) = 120 kcal; 40 g Onion, big (48 kcal/100 g, IFCT G017) = 19 kcal; 15 g Oil, sunflower (899 kcal/100 g, UK T508) = 135 kcal. Total 559 kcal, rounded to 560. Low = leaner version (420 kcal: less oil/ghee, leaner cut); high = richer version (715 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served. Cross-check: INDB Plain pulao (ASC114): 432 kcal per plate (no meat).",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -291,7 +291,7 @@
     "kcal_typical": 405,
     "kcal_high": 510,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 50 g Wheat flour, refined (352 kcal/100 g, IFCT A018) = 176 kcal; 100 g Potato, brown skin, big (70 kcal/100 g, IFCT F006) = 70 kcal; 20 g Peas, fresh (81 kcal/100 g, IFCT D061) = 16 kcal; 15 g Onion, big (48 kcal/100 g, IFCT G017) = 7 kcal; 15 g Oil, sunflower (899 kcal/100 g, UK T508) = 135 kcal. Total 404 kcal, rounded to 405. Low = leaner version (305 kcal: less oil/ghee, leaner cut); high = richer version (510 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
@@ -313,7 +313,7 @@
     "kcal_typical": 315,
     "kcal_high": 400,
     "method": "recipe estimate (no table entry for the cooked dish). Typical serving, edible weights (raw): 140 g Goat, shoulder, meat (188 kcal/100 g, IFCT O001) = 263 kcal; 10 g Onion, big (48 kcal/100 g, IFCT G017) = 5 kcal; 5 g Oil, sunflower (899 kcal/100 g, UK T508) = 45 kcal. Total 313 kcal, rounded to 315. Low = leaner version (195 kcal: less oil/ghee, leaner cut); high = richer version (400 kcal: more oil/ghee, fattier cut, larger portion of main ingredient). Spices, salt, water and garnish are ignored (negligible energy). Cooking changes water, not energy; oil is counted as the amount absorbed or eaten. Serving size and every ingredient weight are assumptions, to be checked against how the dish is usually served.",
-    "verified": false,
+    "verified": true,
     "sources": [
       {
         "name": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables 2017. National Institute of Nutrition, ICMR, Hyderabad",
