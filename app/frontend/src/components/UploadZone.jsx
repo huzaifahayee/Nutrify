@@ -16,8 +16,8 @@ export default function UploadZone({ onFile, onCamera }) {
       onDragLeave={() => setOver(false)}
       onDrop={(e) => { e.preventDefault(); setOver(false); pick(e.dataTransfer.files); }}
     >
-      <h2>Show us the plate</h2>
-      <p>Drop a photo here, or pick one. One dish in the frame works best.</p>
+      <h2>Drop a <em>photo</em> here</h2>
+      <p>Or pick one from your device. One dish in the frame works best.</p>
       <div className="actions">
         <button className="btn primary" onClick={() => input.current.click()}>Choose photo</button>
         <button className="btn" onClick={onCamera}>Use camera</button>

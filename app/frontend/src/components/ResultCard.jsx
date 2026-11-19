@@ -3,6 +3,13 @@ import PortionPicker from "./PortionPicker.jsx";
 import DishPicker from "./DishPicker.jsx";
 import Feedback from "./Feedback.jsx";
 
+// "Chicken Biryani" -> Chicken <em>Biryani</em> (last word in italic accent)
+function DishName({ name }) {
+  const words = name.split(" ");
+  const last = words.pop();
+  return <>{words.join(" ")}{words.length ? " " : ""}<em>{last}</em></>;
+}
+
 function Calories({ calories, portion, onPortion }) {
   const hasNumbers = calories && calories.kcal_typical > 0;
   return (
@@ -11,8 +18,10 @@ function Calories({ calories, portion, onPortion }) {
       <p className="eyebrow">Estimated energy</p>
       {hasNumbers ? (
         <>
-          <div className="kcal"><b>{calories.kcal_typical}</b><span>kcal</span></div>
-          <p className="range">Likely between {calories.kcal_low} and {calories.kcal_high} kcal</p>
+          <div className="tiles">
+            <div className="tile"><b>{calories.kcal_typical}</b><span>kcal, typical</span></div>
+            <div className="tile"><b>{calories.kcal_low} to {calories.kcal_high}</b><span>kcal, likely range</span></div>
+          </div>
           <p className="serving">{calories.serving}</p>
         </>
       ) : (
@@ -83,7 +92,7 @@ function Corrected({ result, override, loading, portion, onPortion, fb }) {
   return (
     <section className={`result${loading ? " busy" : ""}`} aria-live="polite">
       <p className="eyebrow">You told us it's</p>
-      <h2 className="dish">{override.display_name}</h2>
+      <h2 className="dish"><DishName name={override.display_name} /></h2>
       <p className="tip">{was}</p>
       <Calories calories={override.calories} portion={portion} onPortion={onPortion} />
       <hr className="rule" />
@@ -119,7 +128,7 @@ export default function ResultCard({ result, override, loading, portion, onPorti
   return (
     <section className={`result${loading ? " busy" : ""}`} aria-live="polite">
       <p className="eyebrow">This looks like</p>
-      <h2 className="dish">{best.display_name}</h2>
+      <h2 className="dish"><DishName name={best.display_name} /></h2>
       <div className="sure"><span>{pct}% sure</span><span className="meter"><i style={{ width: `${pct}%` }} /></span></div>
       <Calories calories={result.calories} portion={portion} onPortion={onPortion} />
       <hr className="rule" />

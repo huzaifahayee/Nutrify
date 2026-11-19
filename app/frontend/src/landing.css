@@ -51,7 +51,7 @@ a.btn { text-decoration: none; display: inline-block; }
 .h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 4.2vw, 48px); line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin: 0 0 8px; max-width: 18ch; }
 .h2 em { font-weight: 400; color: var(--saffron); }
 
-.band { margin-top: 96px; background: var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 80px 0; }
+.band { background: var(--paper); padding: 96px 0 24px; }
 .steps { list-style: none; padding: 0; margin: 44px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
 .steps li:nth-child(2) { margin-top: 36px; }
 .steps li:nth-child(3) { margin-top: 72px; }

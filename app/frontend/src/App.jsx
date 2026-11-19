@@ -144,7 +144,8 @@ export default function App() {
       <NavBar theme={theme} onToggle={() => setTheme(theme === "dark" ? "light" : "dark")} />
       <Hero />
 
-      <section className="wrap try" id="try">
+      <section className="try-band" id="try">
+      <div className="wrap try">
         <p className="eyebrow">Try it</p>
         <h2 className="h2">Show us <em>a plate.</em></h2>
         <main className="board">
@@ -191,6 +192,7 @@ export default function App() {
           </div>
         </main>
         <History items={history} currentId={current?.id} onSelect={onSelectHistory} />
+      </div>
       </section>
 
       <HowItWorks />
