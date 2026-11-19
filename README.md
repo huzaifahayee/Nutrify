@@ -163,6 +163,7 @@ To run on a Colab T4 GPU, follow `docs/COLAB.md`.
 | `results/confidence_test.csv` | coverage and accuracy at that threshold on the test set |
 | `results/ood_reference.npz` | the 14 dish centroids used by the out-of-scope check |
 | `results/ood_thresholds.json` | confidence and similarity thresholds used by the app |
+| `results/ood_test.csv` | coverage and accuracy of both checks together on the test set |
 | `results/ood_val.csv` | how each similarity threshold treats validation photos |
 | `results/ood_probe.csv` | optional: results for non-dish photos placed in `data/ood_probe/` |
 | `results/non_dish_check.csv` | informal check with six non-dish photos |
@@ -217,8 +218,9 @@ The app only answers when a photo looks like one of the 14 dishes. Otherwise it 
 the top probability must be at least 0.45 (`results/confidence_threshold.json`, chosen on
 the validation set: accuracy 0.9173 at coverage 0.8313; test accuracy 0.8727 at coverage
 0.8456), and the photo's feature vector must be close enough to the nearest dish centroid
-(`results/ood_thresholds.json`, chosen on the validation set so that 95% of correctly
-classified photos still pass). Calorie ranges (low, typical, high per serving) come from
+(`results/ood_thresholds.json`, chosen on the validation set so that 88% of correctly
+classified photos still pass; with both checks the model answers 75.7% of test photos at
+88.2% accuracy, see `results/ood_test.csv`). Calorie ranges (low, typical, high per serving) come from
 `src/calories.py` and `src/calories.json`.
 
 To redo the threshold analysis and the sample-predictions figure (they need the weights

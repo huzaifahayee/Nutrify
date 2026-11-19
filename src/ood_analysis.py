@@ -9,6 +9,7 @@ Writes:
   results/ood_reference.npz     the 14 dish centroids (from the training images)
   results/ood_thresholds.json   min_confidence and min_similarity used by the backend
   results/ood_val.csv           how each similarity threshold treats validation images
+  results/ood_test.csv          both gates applied once to the test images
   results/ood_probe.csv         only if data/ood_probe/ exists: per-photo result for
                                 non-dish photos (selfies, objects, other foods)
 
@@ -34,7 +35,10 @@ CKPT = ROOT / "checkpoints" / "efficientnet_best.pt"
 DATA_DIR = ROOT / "data" / "processed"
 PROBE_DIR = ROOT / "data" / "ood_probe"
 RESULTS = ROOT / "results"
-KEEP_CORRECT = 0.95  # keep at least 95% of correctly classified validation photos
+# Keep this share of correctly classified validation photos. It was 0.95 at first; the
+# first probe run (data/ood_probe/) let two non-dish photos through, so it was tightened
+# to 0.88. Note: this was tuned on a small probe set (26 photos), so treat it as a choice.
+KEEP_CORRECT = 0.88
 
 
 def load_model():
@@ -123,6 +127,15 @@ def main():
 
     print(f"min_confidence {min_conf}, min_similarity {min_sim:.4f} (keeps {KEEP_CORRECT:.0%} of correct val photos)")
     print(f"validation: both gates answer {both.mean():.3f} of photos, accuracy {correct[both].mean():.3f}")
+
+    test_f, test_p, test_y = run_split(model, "test")
+    test_ok = test_p.argmax(axis=1) == test_y
+    test_both = (test_p.max(axis=1) >= min_conf) & (similarity(test_f, centroids) >= min_sim)
+    with open(RESULTS / "ood_test.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["min_confidence", "min_similarity", "coverage", "accuracy"])
+        w.writerow([min_conf, round(min_sim, 4), round(float(test_both.mean()), 4), round(float(test_ok[test_both].mean()), 4)])
+    print(f"test: both gates answer {test_both.mean():.3f} of photos, accuracy {test_ok[test_both].mean():.3f}")
 
     probe = probe_photos(model, centroids, min_conf, min_sim)
     if probe is None:
