@@ -24,3 +24,29 @@ export async function predict(file, portion = 1, signal) {
   if (!res.ok) throw new ApiError("server", "Something went wrong on the server.");
   return res.json();
 }
+
+export async function getCalories(dish, portion = 1) {
+  let res;
+  try {
+    res = await fetch(`${BASE}/calories?dish=${encodeURIComponent(dish)}&portion=${portion}`);
+  } catch {
+    throw new ApiError("network", "Can't reach the Nutrify server.");
+  }
+  if (!res.ok) throw new ApiError("server", "Calorie data is not available.");
+  return res.json();
+}
+
+// Tell the server what the dish really is (a dish key from the 14, or "none").
+export async function sendFeedback(file, correctedLabel) {
+  const body = new FormData();
+  body.append("file", file);
+  body.append("corrected_label", correctedLabel);
+  let res;
+  try {
+    res = await fetch(`${BASE}/feedback`, { method: "POST", body });
+  } catch {
+    throw new ApiError("network", "Can't reach the Nutrify server.");
+  }
+  if (!res.ok) throw new ApiError("server", "Couldn't save your answer.");
+  return res.json();
+}

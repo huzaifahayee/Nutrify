@@ -8,3 +8,6 @@ export const DISHES = [
 // Headline numbers shown on the landing page.
 // Source: results/metrics_efficientnet.csv (accuracy row), 641 test images.
 export const STATS = { dishes: DISHES.length, testAccuracy: "79.9%", testImages: 641 };
+
+// Same dishes with the keys the API uses (the names in src/classes.json).
+export const DISH_LIST = DISHES.map((name) => ({ name, key: name.toLowerCase().replace(/ /g, "_") }));

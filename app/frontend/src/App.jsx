@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { predict, ApiError } from "./api.js";
+import { predict, getCalories, sendFeedback, ApiError } from "./api.js";
+import { DISH_LIST } from "./dishes.js";
 import UploadZone from "./components/UploadZone.jsx";
 import CameraCapture from "./components/CameraCapture.jsx";
 import ResultCard from "./components/ResultCard.jsx";
@@ -27,6 +28,8 @@ export default function App() {
   const [error, setError] = useState(null);
   const [camera, setCamera] = useState(false);
   const [history, setHistory] = useState([]);
+  const [override, setOverride] = useState(null); // user's correction: { kind: "dish" | "none", ... }
+  const [fbStatus, setFbStatus] = useState("idle"); // idle | saving | saved | confirmed | error
   const abort = useRef(null);
 
   useEffect(() => {
@@ -56,18 +59,63 @@ export default function App() {
     }
   }, []);
 
+  // Keep the user's answer with the photo in session history.
+  useEffect(() => {
+    if (!current) return;
+    setHistory((h) => h.map((x) => (x.id === current.id ? { ...x, override, fbStatus } : x)));
+  }, [override, fbStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const onFile = (file) => {
     const item = { id: crypto.randomUUID(), file, url: URL.createObjectURL(file) };
     setCamera(false);
     setCurrent(item);
     setResult(null);
+    setOverride(null);
+    setFbStatus("idle");
     setPortion(1);
     run(item, 1);
   };
 
   const onPortion = (p) => {
     setPortion(p);
-    if (current) run(current, p);
+    if (override?.kind === "dish") {
+      // The user chose the dish, so only the calories change; no need to run the model again.
+      getCalories(override.dish, p)
+        .then((cal) => setOverride((o) => (o ? { ...o, calories: cal } : o)))
+        .catch(() => {});
+    } else if (current && !override) {
+      run(current, p);
+    }
+  };
+
+  // label is one of the 14 dish keys, or "none". Saves it, then shows the corrected answer.
+  const submitFeedback = async (label) => {
+    if (!current || !result) return;
+    setFbStatus("saving");
+    const confirms = result.in_scope && label === result.top[0].dish;
+    try {
+      const [, cal] = await Promise.all([
+        sendFeedback(current.file, label),
+        confirms || label === "none" ? Promise.resolve(null) : getCalories(label, portion).catch(() => null),
+      ]);
+      if (confirms) {
+        setFbStatus("confirmed");
+      } else if (label === "none") {
+        setOverride({ kind: "none" });
+        setFbStatus("saved");
+      } else {
+        const name = DISH_LIST.find((d) => d.key === label)?.name ?? label;
+        setOverride({ kind: "dish", dish: label, display_name: name, calories: cal });
+        setFbStatus("saved");
+      }
+    } catch {
+      setFbStatus("error");
+    }
+  };
+
+  const undoFeedback = () => {
+    setOverride(null);
+    setFbStatus("idle");
   };
 
   const onSelectHistory = (it) => {
@@ -77,12 +125,16 @@ export default function App() {
     setCurrent({ id: it.id, file: it.file, url: it.url });
     setResult(it.result);
     setPortion(it.portion);
+    setOverride(it.override ?? null);
+    setFbStatus(it.fbStatus && it.fbStatus !== "saving" ? it.fbStatus : "idle");
   };
 
   const reset = () => {
     abort.current?.abort();
     setCurrent(null);
     setResult(null);
+    setOverride(null);
+    setFbStatus("idle");
     setError(null);
     setLoading(false);
   };
@@ -127,7 +179,15 @@ export default function App() {
                 )}
               </div>
             )}
-            <ResultCard result={result} loading={loading} portion={portion} onPortion={onPortion} onReset={reset} />
+            <ResultCard
+              result={result}
+              override={override}
+              loading={loading}
+              portion={portion}
+              onPortion={onPortion}
+              onReset={reset}
+              fb={{ status: fbStatus, onSubmit: submitFeedback, onUndo: undoFeedback }}
+            />
           </div>
         </main>
         <History items={history} currentId={current?.id} onSelect={onSelectHistory} />

@@ -100,5 +100,20 @@ details.src a { color: var(--saffron); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 /* out of scope */
-.dish-chips { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.dish-chips li { font-size: 13px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+
+/* feedback and dish picker */
+.fb { margin-top: 4px; }
+.fb-q { font-family: var(--font-display); font-size: 18px; margin: 0 0 10px; }
+.fb-actions { display: flex; gap: 8px; }
+.fb-note { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
+.fb-error { color: var(--chili); font-size: 14px; margin: 10px 0 0; }
+.link-btn { background: none; border: 0; padding: 0; color: var(--saffron); text-decoration: underline; font-size: inherit; }
+.picker { margin: 8px 0 12px; }
+.pick-label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
+.pick-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.pick-btn { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 14px; color: var(--ink); }
+.pick-btn small { color: var(--muted); margin-left: 4px; }
+.pick-btn:hover:not(:disabled) { border-color: var(--saffron); background: var(--saffron-soft); }
+.pick-btn.guess { border-color: var(--saffron); }
+.pick-btn.none { margin-top: 12px; border-radius: 4px; border-style: dashed; color: var(--muted); }
+.pick-btn:disabled { opacity: .5; cursor: default; }

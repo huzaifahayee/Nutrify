@@ -35,10 +35,12 @@ Nutrify/
 ├── app/
 │   ├── backend/              # FastAPI: model loading and /predict
 │   └── frontend/             # React (Vite) web app
+├── feedback/                 # user corrections (created at runtime, not in Git)
 ├── tests/
 │   ├── test_api.py           # backend tests (need the weights file)
 │   ├── test_calories.py      # calorie module tests
-│   └── test_ood.py           # out-of-scope gate tests
+│   ├── test_ood.py           # out-of-scope gate tests
+│   └── test_feedback.py      # feedback and calories endpoint tests
 ├── src/
 │   ├── dataset.py
 │   ├── efficientnet_model.py
@@ -206,7 +208,20 @@ Backend endpoints:
 |---|---|
 | `GET /health` | status, number of classes, confidence threshold |
 | `GET /dishes` | the 14 dish names |
+| `GET /calories` | calorie range for a chosen `dish` and `portion`, without running the model |
+| `POST /feedback` | form fields `file` and `corrected_label` (one of the 14 dishes or `none`); stores the correction |
 | `POST /predict` | form fields `file` (image, up to 10 MB) and optional `portion` (0.25 to 4, default 1); returns the top 3 dishes, `in_scope` (with a `reason` when it is false), and a calorie range |
+
+Corrections: under every result the app asks "Is this correct?". Yes confirms the answer. No
+lets the user pick the right dish (the model's other guesses first, then all 14, or "None
+of these"), and the calories update to the chosen dish. Photos the app rejected as out of
+scope can also be corrected by picking the dish. Each answer is saved by the backend in
+`feedback/corrections.jsonl` (one JSON line per answer: id, UTC timestamp, image file,
+image hash, predicted label, confidence, top 3, in-scope flag and reason, corrected label,
+whether the model was right) with the photo in `feedback/images/`. Photos are re-saved as
+JPEG, which drops EXIF data such as location. The folder is not in Git because it holds user
+photos. If the same photo appears twice (same `image_sha256`), the latest line is the
+final answer. These records can be used to evaluate or retrain the model later.
 
 Example:
 ```bash
