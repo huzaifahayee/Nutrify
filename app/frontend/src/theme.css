@@ -1,18 +1,18 @@
-/* Nutrify design tokens: organic editorial. Cream paper, deep botanical green,
+/* Nutrify design tokens: organic editorial. Fresh white, deep botanical green,
    terracotta and coral accents. Variable names are kept from the first version. */
 :root,
 :root[data-theme="light"] {
-  --paper: #faf7f0;
-  --paper-2: #f3eee1;
-  --card: #fffdf8;
+  --paper: #f7faf8;
+  --paper-2: #e6f1ea;
+  --card: #ffffff;
   --ink: #0e3526;          /* forest green: text and primary buttons */
-  --muted: #5a6b60;
-  --line: #e6dfcf;
+  --muted: #5b6e63;
+  --line: #dce7df;
   --saffron: #a2432a;      /* terracotta accent */
-  --saffron-soft: #f5ddd3;
+  --saffron-soft: #f8e1d9;
   --cardamom: #2f6b45;     /* leaf green */
   --leaf: #2f6b45;         /* photo block background */
-  --cardamom-soft: #cfe9d8;
+  --cardamom-soft: #d7ede0;
   --chili: #b3261e;
   --chili-soft: #f6dad6;
   --coral: #f3866a;
