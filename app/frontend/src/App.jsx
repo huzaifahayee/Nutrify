@@ -146,7 +146,7 @@ export default function App() {
 
       <section className="wrap try" id="try">
         <p className="eyebrow">Try it</p>
-        <h2 className="h2">Show us a plate.</h2>
+        <h2 className="h2">Show us <em>a plate.</em></h2>
         <main className="board">
           <div>
             <p className="eyebrow">Your photo</p>

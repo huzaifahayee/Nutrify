@@ -8,7 +8,7 @@ export default function NavBar({ theme, onToggle }) {
         <nav className="nav-links" aria-label="Sections">
           <a href="#try">Try it</a>
           <a href="#how">How it works</a>
-          <a href="#dishes">Dishes</a>
+          <a href="#dishes">The menu</a>
         </nav>
         <ThemeToggle theme={theme} onToggle={onToggle} />
       </div>

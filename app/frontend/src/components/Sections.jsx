@@ -10,7 +10,7 @@ export function HowItWorks() {
     <section className="band" id="how">
       <div className="wrap">
         <p className="eyebrow">How it works</p>
-        <h2 className="h2">From photo to estimate in three steps.</h2>
+        <h2 className="h2">From photo to <em>estimate</em> in three steps.</h2>
         <ol className="steps">
           {steps.map(([n, t, d]) => (
             <li key={n}><span className="step-n">{n}</span><h3>{t}</h3><p>{d}</p></li>
@@ -29,7 +29,7 @@ export function DishMenu() {
   return (
     <section className="wrap" id="dishes">
       <p className="eyebrow">The menu</p>
-      <h2 className="h2">The 14 dishes we know.</h2>
+      <h2 className="h2">The 14 dishes <em>we know.</em></h2>
       <ol className="menu">
         {DISHES.map((d, i) => (
           <li key={d}>
@@ -46,9 +46,12 @@ export function DishMenu() {
 export function Footer() {
   return (
     <footer className="foot">
-      <div className="wrap">
-        <p>Nutrify is an AI course project at FAST-NUCES Lahore, by Muhammad Huzaifa and Muhammad Abdullah Rasheed.</p>
-        <p>Calorie values are estimates, not medical or dietary advice.</p>
+      <div className="wrap foot-in">
+        <p className="foot-brand">Nutrify</p>
+        <div>
+          <p>An AI course project at FAST-NUCES Lahore, by Muhammad Huzaifa and Muhammad Abdullah Rasheed.</p>
+          <p>Calorie values are estimates, not medical or dietary advice.</p>
+        </div>
       </div>
     </footer>
   );

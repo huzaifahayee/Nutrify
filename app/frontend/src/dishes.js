@@ -11,3 +11,6 @@ export const STATS = { dishes: DISHES.length, testAccuracy: "79.9%", testImages:
 
 // Same dishes with the keys the API uses (the names in src/classes.json).
 export const DISH_LIST = DISHES.map((name) => ({ name, key: name.toLowerCase().replace(/ /g, "_") }));
+
+// Example shown on the landing page. Source: src/calories.json (chicken_biryani, standard serving).
+export const SAMPLE = { dish: "Chicken biryani", kcal: 845, serving: "1 plate, about 350 g" };

@@ -1,35 +1,47 @@
-/* Nutrify design tokens. Palette is borrowed from a spice shelf:
-   cream paper, chai-dark ink, saffron, cardamom green, chili red. */
+/* Nutrify design tokens: organic editorial. Cream paper, deep botanical green,
+   terracotta and coral accents. Variable names are kept from the first version. */
 :root,
 :root[data-theme="light"] {
-  --paper: #f5eedf;
-  --card: #fbf7ee;
-  --ink: #2a211a;
-  --muted: #6f5f4f;
-  --line: #ddcfb7;
-  --saffron: #b8690a;
-  --saffron-soft: #f1dfb8;
-  --cardamom: #46633f;
-  --cardamom-soft: #dfe8d2;
-  --chili: #a8321c;
-  --chili-soft: #f2d9d0;
+  --paper: #faf7f0;
+  --paper-2: #f3eee1;
+  --card: #fffdf8;
+  --ink: #0e3526;          /* forest green: text and primary buttons */
+  --muted: #5a6b60;
+  --line: #e6dfcf;
+  --saffron: #a2432a;      /* terracotta accent */
+  --saffron-soft: #f5ddd3;
+  --cardamom: #2f6b45;     /* leaf green */
+  --leaf: #2f6b45;         /* photo block background */
+  --cardamom-soft: #cfe9d8;
+  --chili: #b3261e;
+  --chili-soft: #f6dad6;
+  --coral: #f3866a;
+  --on-coral: #3a130a;
   --on-saffron: #fffaf0;
-  --font-display: "Fraunces Variable", Georgia, serif;
+  --forest: #0e3526;
+  --on-forest: #f4efe3;
+  --font-display: "Playfair Display Variable", Georgia, serif;
   --font-body: "DM Sans Variable", system-ui, sans-serif;
   color-scheme: light;
 }
 :root[data-theme="dark"] {
-  --paper: #1b1612;
-  --card: #251e18;
-  --ink: #f3eadb;
-  --muted: #b3a38c;
-  --line: #3b3028;
-  --saffron: #e6aa3c;
-  --saffron-soft: #3f3016;
-  --cardamom: #9bc08f;
-  --cardamom-soft: #26301f;
-  --chili: #e9795f;
-  --chili-soft: #3a211b;
-  --on-saffron: #1f1500;
+  --paper: #0b1d15;
+  --paper-2: #10261b;
+  --card: #132b20;
+  --ink: #f2ebdc;
+  --muted: #a9b9ad;
+  --line: #24412f;
+  --saffron: #f08a6c;
+  --saffron-soft: #3a2a21;
+  --cardamom: #8fc7a0;
+  --leaf: #1c4a33;
+  --cardamom-soft: #1c3a2a;
+  --chili: #f28b82;
+  --chili-soft: #3a1f1c;
+  --coral: #f3866a;
+  --on-coral: #2e0f07;
+  --on-saffron: #0b1d15;
+  --forest: #07140e;
+  --on-forest: #f2ebdc;
   color-scheme: dark;
 }
