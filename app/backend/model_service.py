@@ -2,6 +2,7 @@
 import io
 import sys
 
+import numpy as np
 import torch
 from PIL import Image, ImageOps
 
@@ -27,6 +28,11 @@ class ModelService:
         self.model.load_state_dict(ckpt["state_dict"])
         self.model.eval()
         self.transform = eval_transforms()
+        # Dish centroids from results/ood_reference.npz (built by src/ood_analysis.py).
+        self.centroids = None
+        if config.OOD_REFERENCE_PATH.exists():
+            c = np.load(config.OOD_REFERENCE_PATH)["centroids"]
+            self.centroids = torch.from_numpy(c / np.linalg.norm(c, axis=1, keepdims=True)).float()
 
     def _load_image(self, data):
         try:
@@ -38,8 +44,17 @@ class ModelService:
 
     @torch.inference_mode()
     def predict(self, data, top_k=config.TOP_K):
-        """Return [(dish, probability), ...] for the top_k classes, best first."""
+        """Return the top_k [(dish, probability)] and the similarity to the nearest dish.
+
+        similarity is None when results/ood_reference.npz does not exist.
+        """
         x = self.transform(self._load_image(data)).unsqueeze(0)
-        probs = torch.softmax(self.model(x), dim=1)[0]
+        feats = self.model.avgpool(self.model.features(x)).flatten(1)
+        probs = torch.softmax(self.model.classifier(feats), dim=1)[0]
         values, indices = probs.topk(min(top_k, len(self.classes)))
-        return [(self.classes[i], float(v)) for v, i in zip(values, indices)]
+        top = [(self.classes[i], float(v)) for v, i in zip(values, indices)]
+        similarity = None
+        if self.centroids is not None:
+            unit = feats / feats.norm(dim=1, keepdim=True)
+            similarity = float((unit @ self.centroids.T).max())
+        return top, similarity

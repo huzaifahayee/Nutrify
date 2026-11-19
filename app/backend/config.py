@@ -5,6 +5,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CHECKPOINT_PATH = REPO_ROOT / "checkpoints" / "efficientnet_best.pt"
 THRESHOLD_PATH = REPO_ROOT / "results" / "confidence_threshold.json"
+OOD_THRESHOLDS_PATH = REPO_ROOT / "results" / "ood_thresholds.json"
+OOD_REFERENCE_PATH = REPO_ROOT / "results" / "ood_reference.npz"
 
 DEFAULT_THRESHOLD = 0.5  # used until results/confidence_threshold.json exists
 TOP_K = 3

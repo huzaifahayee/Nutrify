@@ -41,9 +41,10 @@ def test_predict_shape(client):
     confs = [t["confidence"] for t in body["top"]]
     assert len(confs) == 3 and confs == sorted(confs, reverse=True)
     assert 0 < sum(confs) <= 1.0001
-    assert body["confident"] == (confs[0] >= body["threshold"])
-    if not body["confident"]:
+    assert body["confident"] == body["in_scope"]
+    if not body["in_scope"]:
         assert body["calories"] is None
+        assert body["reason"] in ("low_confidence", "far_from_dishes")
 
 
 def test_predict_rejects_non_image(client):
@@ -58,3 +59,12 @@ def test_predict_rejects_bad_portion(client):
         data={"portion": "100"},
     )
     assert r.status_code == 422
+
+
+def test_plain_image_is_out_of_scope(client):
+    """A flat colour is not a dish: no calories, a reason is given."""
+    r = client.post("/predict", files={"file": ("x.jpg", jpeg_bytes(), "image/jpeg")})
+    body = r.json()
+    assert body["in_scope"] is False
+    assert body["calories"] is None
+    assert body["reason"] is not None

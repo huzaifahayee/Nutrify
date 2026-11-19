@@ -10,6 +10,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import config
+from . import ood
 from .model_service import ImageError, ModelService
 
 log = logging.getLogger("nutrify")
@@ -26,7 +27,7 @@ state = {}
 @asynccontextmanager
 async def lifespan(app):
     state["service"] = ModelService()
-    state["threshold"] = config.load_threshold()
+    state["gates"] = ood.load_gates()
     yield
     state.clear()
 
@@ -59,10 +60,12 @@ def calories_for(dish, portion):
 @app.get("/health")
 def health():
     service = state.get("service")
+    gates = state.get("gates")
     return {
         "status": "ok" if service else "loading",
         "classes": len(service.classes) if service else 0,
-        "threshold": state.get("threshold", config.DEFAULT_THRESHOLD),
+        "threshold": gates.min_confidence if gates else config.DEFAULT_THRESHOLD,
+        "similarity_gate": bool(gates and gates.min_similarity is not None and service.centroids is not None),
         "calories_available": get_calories is not None,
     }
 
@@ -82,13 +85,14 @@ async def predict(file: UploadFile = File(...), portion: float = Form(1.0)):
     if len(data) > config.MAX_UPLOAD_BYTES:
         raise HTTPException(413, "Image is larger than 10 MB")
     try:
-        top = state["service"].predict(data)
+        top, similarity = state["service"].predict(data)
     except ImageError as exc:
         raise HTTPException(400, str(exc))
 
-    threshold = state["threshold"]
-    confident = top[0][1] >= threshold
-    calories = calories_for(top[0][0], portion) if confident else None
+    gates = state["gates"]
+    reason = ood.check(top[0][1], similarity, gates)
+    in_scope = reason is None
+    calories = calories_for(top[0][0], portion) if in_scope else None
     top_out = []
     for dish, prob in top:
         name = (calories or {}).get("display_name") if dish == top[0][0] else None
@@ -97,7 +101,10 @@ async def predict(file: UploadFile = File(...), portion: float = Form(1.0)):
         )
     return {
         "top": top_out,
-        "confident": confident,
-        "threshold": threshold,
+        "confident": in_scope,  # kept for older clients: same as in_scope
+        "in_scope": in_scope,
+        "reason": reason,  # None, "low_confidence" or "far_from_dishes"
+        "threshold": gates.min_confidence,
+        "similarity": None if similarity is None else round(similarity, 4),
         "calories": calories,
     }

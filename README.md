@@ -37,7 +37,8 @@ Nutrify/
 │   └── frontend/             # React (Vite) web app
 ├── tests/
 │   ├── test_api.py           # backend tests (need the weights file)
-│   └── test_calories.py      # calorie module tests
+│   ├── test_calories.py      # calorie module tests
+│   └── test_ood.py           # out-of-scope gate tests
 ├── src/
 │   ├── dataset.py
 │   ├── efficientnet_model.py
@@ -48,6 +49,7 @@ Nutrify/
 │   ├── evaluate.py
 │   ├── bias_check.py
 │   ├── confidence_analysis.py
+│   ├── ood_analysis.py
 │   ├── sample_predictions.py
 │   ├── calories.py
 │   └── calories.json
@@ -159,6 +161,10 @@ To run on a Colab T4 GPU, follow `docs/COLAB.md`.
 | `results/confidence_val.csv` | coverage and accuracy for each confidence threshold, on the validation set |
 | `results/confidence_threshold.json` | the chosen threshold (0.45) |
 | `results/confidence_test.csv` | coverage and accuracy at that threshold on the test set |
+| `results/ood_reference.npz` | the 14 dish centroids used by the out-of-scope check |
+| `results/ood_thresholds.json` | confidence and similarity thresholds used by the app |
+| `results/ood_val.csv` | how each similarity threshold treats validation photos |
+| `results/ood_probe.csv` | optional: results for non-dish photos placed in `data/ood_probe/` |
 | `results/non_dish_check.csv` | informal check with six non-dish photos |
 | `results/sample_predictions.png` | grid of correct and wrong test predictions |
 | `checkpoints/<model>_best.pt` | best weights (not in Git) |
@@ -199,24 +205,27 @@ Backend endpoints:
 |---|---|
 | `GET /health` | status, number of classes, confidence threshold |
 | `GET /dishes` | the 14 dish names |
-| `POST /predict` | form fields `file` (image, up to 10 MB) and optional `portion` (0.25 to 4, default 1); returns the top 3 dishes, whether the model is confident, and a calorie range |
+| `POST /predict` | form fields `file` (image, up to 10 MB) and optional `portion` (0.25 to 4, default 1); returns the top 3 dishes, `in_scope` (with a `reason` when it is false), and a calorie range |
 
 Example:
 ```bash
 curl -F "file=@photo.jpg" -F "portion=1" http://localhost:8000/predict
 ```
 
-The app answers "not sure" and shows no calories when the top probability is below
-the confidence threshold in `results/confidence_threshold.json`, which is 0.45. It was
-chosen on the validation set (accuracy 0.9173 at coverage 0.8313) and reported once on the
-test set (accuracy 0.8727 at coverage 0.8456); see `results/confidence_val.csv` and
-`results/confidence_test.csv`. Calorie ranges (low, typical, high per serving) come from
+The app only answers when a photo looks like one of the 14 dishes. Otherwise it shows
+"out of scope", lists the supported dishes and hides the calories. Two checks run:
+the top probability must be at least 0.45 (`results/confidence_threshold.json`, chosen on
+the validation set: accuracy 0.9173 at coverage 0.8313; test accuracy 0.8727 at coverage
+0.8456), and the photo's feature vector must be close enough to the nearest dish centroid
+(`results/ood_thresholds.json`, chosen on the validation set so that 95% of correctly
+classified photos still pass). Calorie ranges (low, typical, high per serving) come from
 `src/calories.py` and `src/calories.json`.
 
 To redo the threshold analysis and the sample-predictions figure (they need the weights
 file and `data/processed/`):
 ```bash
 python src/confidence_analysis.py
+python src/ood_analysis.py
 python src/sample_predictions.py
 ```
 

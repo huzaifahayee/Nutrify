@@ -7,7 +7,7 @@ export default function History({ items, currentId, onSelect }) {
         {items.map((it) => (
           <button key={it.id} className="hist-item" aria-current={it.id === currentId} onClick={() => onSelect(it)}>
             <img src={it.url} alt="" />
-            <span>{it.result.confident ? it.result.top[0].display_name : "Not sure"}</span>
+            <span>{it.result.in_scope ? it.result.top[0].display_name : "Out of scope"}</span>
             <em>{Math.round(it.result.top[0].confidence * 100)}%</em>
           </button>
         ))}

@@ -127,7 +127,7 @@ export default function App() {
                 )}
               </div>
             )}
-            <ResultCard result={result} loading={loading} portion={portion} onPortion={onPortion} />
+            <ResultCard result={result} loading={loading} portion={portion} onPortion={onPortion} onReset={reset} />
           </div>
         </main>
         <History items={history} currentId={current?.id} onSelect={onSelectHistory} />
