@@ -273,6 +273,13 @@ Tuning winner: `batch_16` (batch size 16, other settings at the default), valida
 loss 1.167360 and validation accuracy 0.792188 in the 8-epoch search
 (`results/hparam_results.csv`).
 
-## Notes
-- Raw images are not stored in this repo (see `.gitignore`).
-- Known limitation: scraped images can include watermarks and text overlays.
+## Known limitations
+- The classifier knows only 14 dishes. Photos of anything else are rejected as out of scope by two checks (confidence and feature similarity). The checks work on most non-dish photos we tried (29 of 30 in an informal test) but are not guaranteed to catch every one.
+- Calorie values are estimates for a standard serving, built from recipes and food composition tables. They are not laboratory measurements, and the portion size is chosen by the user, not detected from the photo.
+- Scraped training images can include watermarks and text overlays, and four dishes come from a different source than the other ten, which can bias results.
+- Raw images, model weights and user feedback photos are not stored in this repo (see `.gitignore`).
+
+## Credits
+- Hero photo on the landing page: Shreyak Singh on Unsplash.
+- Calorie sources (details in `src/calories.json`): Indian Food Composition Tables 2017 (ICMR-NIN), McCance and Widdowson's CoFID as used in the Indian Nutrient Databank, and Vijayakumar et al., Current Developments in Nutrition, 2024.
+- Datasets: Bing image search results and the Kaggle "Indian Food Classification" dataset; the full list of references is in `report/references.bib`.
