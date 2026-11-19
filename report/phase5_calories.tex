@@ -74,8 +74,9 @@ ambiguous dish, or an image that does not contain food at all. To prevent the
 application from presenting low-confidence guesses as definite answers,
 \texttt{src/confidence\_analysis.py} selects a rejection threshold $\tau$ on
 the 640-image validation set. When the top softmax probability falls below
-$\tau$, the application returns \texttt{"Not sure"} and withholds the primary
-dish decision while still showing the top guesses for transparency.
+$\tau$, the application withholds the dish decision and the calorie estimate. (In the
+final application such a photo is reported as out of scope, and a second
+feature-similarity check was added; see the application section above.)
 
 \paragraph{Validation sweep and test evaluation.}
 We swept $\tau$ from $0.30$ to $0.90$ in steps of $0.05$ on the validation set

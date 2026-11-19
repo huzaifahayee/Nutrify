@@ -98,7 +98,10 @@ the 14 dish logits; while the $0.45$ validation-selected confidence threshold
 raises accuracy on accepted test images to $0.8727$ (at $0.8456$ coverage) and
 blocks 4 of 6 non-dish test photos as \texttt{Not sure}, two non-dish selfies
 still crossed the threshold at $0.45$ and $0.58$ confidence and were labelled
-\texttt{Samosa}. Likewise, the calorie module provides deterministic,
+\texttt{Samosa}. The application therefore adds a second, feature-similarity check
+(Section~5), which rejected 29 of 30 non-dish probe photos including an arm
+close-up whose confidence was $0.473$; it is an informal test on a small set and
+not a guarantee. Likewise, the calorie module provides deterministic,
 traceable recipe estimates from IFCT 2017~\cite{longvah2017ifct} and UK
 CoFID~\cite{cofid2021} rather than laboratory measurements of the user's plate,
 and relies on user-selected portion multipliers rather than estimating 3D food
@@ -116,7 +119,8 @@ substantially outperforming a 392,974-parameter CNN trained from scratch
 (0.5086 accuracy, 0.4700 macro F1). Pairing the classifier with a 0.45
 confidence threshold selected on validation data improved test accuracy on
 accepted predictions to 0.8727 across 84.56\% of test images while flagging
-uncertain or out-of-distribution inputs as ``Not sure,'' and our deterministic
+uncertain inputs, and a feature-similarity check rejected 29 of 30 informal non-dish
+probe photos as out of scope, and our deterministic
 calorie lookup grounds per-serving low, typical, and high calorie ranges in
 IFCT 2017~\cite{longvah2017ifct} and UK CoFID~\cite{cofid2021} ingredient
 values.
@@ -125,9 +129,11 @@ Several practical directions remain for future work:
 \begin{itemize}
   \item \textbf{Expanding dish coverage and open-set rejection:} Adding
         everyday accompaniments and regional dishes (such as chapati, naan,
-        raita, chana masala, and desserts) alongside a dedicated background or
-        out-of-distribution detector so non-food and unrecognised dishes are
-        rejected reliably rather than relying only on top-1 softmax confidence.
+        raita, chana masala, and desserts) alongside a trained background class or a stronger
+        out-of-distribution detector. The current confidence and similarity checks
+        are not trained to recognise non-food, so some non-dish photos could still
+        be accepted. The user corrections the application already stores could
+        also be used to retrain or re-evaluate the model.
   \item \textbf{Portion estimation from the photo:} Replacing manual portion
         multipliers with automated volume or area estimation, for example using
         segmentation masks combined with a reference object (such as a standard
