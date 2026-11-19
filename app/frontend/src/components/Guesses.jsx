@@ -10,7 +10,7 @@ export default function Guesses({ top }) {
               <span className="g-lead" aria-hidden="true" />
               <span className="g-pct">{pct}%</span>
             </div>
-            <div className="g-bar" aria-hidden="true"><i style={{ width: `${Math.max(pct, 1)}%` }} /></div>
+            <div className="g-bar" aria-hidden="true"><i style={{ "--w": `${Math.max(pct, 1)}%`, "--i": i }} /></div>
           </li>
         );
       })}

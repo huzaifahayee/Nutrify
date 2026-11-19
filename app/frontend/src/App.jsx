@@ -7,6 +7,7 @@ import ResultCard from "./components/ResultCard.jsx";
 import History from "./components/History.jsx";
 import NavBar from "./components/NavBar.jsx";
 import Hero from "./components/Hero.jsx";
+import Marquee from "./components/Marquee.jsx";
 import { HowItWorks, DishMenu, Footer } from "./components/Sections.jsx";
 
 const MAX_HISTORY = 6;
@@ -143,6 +144,7 @@ export default function App() {
     <>
       <NavBar theme={theme} onToggle={() => setTheme(theme === "dark" ? "light" : "dark")} />
       <Hero />
+      <Marquee />
 
       <section className="try-band" id="try">
       <div className="wrap try">

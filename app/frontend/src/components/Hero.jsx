@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCountUp, useParallax } from "../hooks.js";
 import PlateArt from "./PlateArt.jsx";
 import { STATS, SAMPLE } from "../dishes.js";
 
@@ -17,6 +18,8 @@ function HeroPhoto() {
 }
 
 export default function Hero() {
+  const art = useParallax(0.07);
+  const kcal = useCountUp(SAMPLE.kcal, { duration: 1400, delay: 900 });
   return (
     <section className="hero" id="top">
       <div className="hero-in">
@@ -40,11 +43,11 @@ export default function Hero() {
             <div><dt>Model</dt><dd>EfficientNet-B0</dd></div>
           </dl>
         </div>
-        <div className="hero-art">
+        <div className="hero-art" ref={art}>
           <HeroPhoto />
           <div className="kcal-tag" aria-label={`Example: ${SAMPLE.dish}, ${SAMPLE.kcal} kilocalories`}>
             <span className="kt-k">Example · {SAMPLE.dish}</span>
-            <span className="kt-n">{SAMPLE.kcal} kcal</span>
+            <span className="kt-n">{kcal} kcal</span>
             <span className="kt-s">{SAMPLE.serving}</span>
           </div>
         </div>

@@ -2,6 +2,12 @@ import Guesses from "./Guesses.jsx";
 import PortionPicker from "./PortionPicker.jsx";
 import DishPicker from "./DishPicker.jsx";
 import Feedback from "./Feedback.jsx";
+import { useCountUp } from "../hooks.js";
+
+// A number that eases to its new value (used for calories).
+function CountNum({ value }) {
+  return <>{useCountUp(value, { duration: 700 })}</>;
+}
 
 // "Chicken Biryani" -> Chicken <em>Biryani</em> (last word in italic accent)
 function DishName({ name }) {
@@ -19,8 +25,8 @@ function Calories({ calories, portion, onPortion }) {
       {hasNumbers ? (
         <>
           <div className="tiles">
-            <div className="tile"><b>{calories.kcal_typical}</b><span>kcal, typical</span></div>
-            <div className="tile"><b>{calories.kcal_low} to {calories.kcal_high}</b><span>kcal, likely range</span></div>
+            <div className="tile"><b><CountNum value={calories.kcal_typical} /></b><span>kcal, typical</span></div>
+            <div className="tile"><b><CountNum value={calories.kcal_low} /> to <CountNum value={calories.kcal_high} /></b><span>kcal, likely range</span></div>
           </div>
           <p className="serving">{calories.serving}</p>
         </>
@@ -58,7 +64,7 @@ function OutOfScope({ result, override, loading, onReset, fb }) {
   const near = result.reason === "low_confidence";
   const none = override?.kind === "none";
   return (
-    <section className={`result unsure${loading ? " busy" : ""}`} aria-live="polite">
+    <section key="oos" className={`result unsure${loading ? " busy" : ""}`} aria-live="polite">
       <span className="tag-unsure">Out of scope</span>
       <h2 className="dish">Not one of our dishes</h2>
       <p className="tip">
@@ -90,7 +96,7 @@ function Corrected({ result, override, loading, portion, onPortion, fb }) {
     ? `The model guessed ${best.display_name} at ${Math.round(best.confidence * 100)}%.`
     : "The model wasn't sure about this photo.";
   return (
-    <section className={`result${loading ? " busy" : ""}`} aria-live="polite">
+    <section key="corrected" className={`result${loading ? " busy" : ""}`} aria-live="polite">
       <p className="eyebrow">You told us it's</p>
       <h2 className="dish"><DishName name={override.display_name} /></h2>
       <p className="tip">{was}</p>
@@ -105,9 +111,12 @@ function Corrected({ result, override, loading, portion, onPortion, fb }) {
 export default function ResultCard({ result, override, loading, portion, onPortion, onReset, fb }) {
   if (!result) {
     return (
-      <section className="result empty" aria-live="polite">
+      <section key="empty" className="result empty" aria-live="polite">
         {loading ? (
-          <h2>Reading your photo…</h2>
+          <div className="skeleton" aria-label="Reading your photo">
+            <i className="sk sk-tag" /><i className="sk sk-title" /><i className="sk sk-line" />
+            <i className="sk sk-tiles" /><i className="sk sk-line short" /><i className="sk sk-line" />
+          </div>
         ) : (
           <>
             <h2>Your result appears here</h2>
@@ -126,10 +135,10 @@ export default function ResultCard({ result, override, loading, portion, onPorti
   const best = result.top[0];
   const pct = Math.round(best.confidence * 100);
   return (
-    <section className={`result${loading ? " busy" : ""}`} aria-live="polite">
+    <section key="ok" className={`result${loading ? " busy" : ""}`} aria-live="polite">
       <p className="eyebrow">This looks like</p>
       <h2 className="dish"><DishName name={best.display_name} /></h2>
-      <div className="sure"><span>{pct}% sure</span><span className="meter"><i style={{ width: `${pct}%` }} /></span></div>
+      <div className="sure"><span>{pct}% sure</span><span className="meter"><i style={{ "--w": `${pct}%` }} /></span></div>
       <Calories calories={result.calories} portion={portion} onPortion={onPortion} />
       <hr className="rule" />
       <p className="eyebrow">Top guesses</p>
