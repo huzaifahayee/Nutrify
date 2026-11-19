@@ -20,6 +20,16 @@ class ImageError(ValueError):
     """The uploaded bytes are not a readable image."""
 
 
+def load_image(data):
+    """Bytes -> RGB image, rotated by its EXIF orientation. Raises ImageError."""
+    try:
+        img = Image.open(io.BytesIO(data))
+        img = ImageOps.exif_transpose(img)  # phone photos carry rotation in EXIF
+        return img.convert("RGB")
+    except Exception as exc:  # PIL raises many different errors
+        raise ImageError("File is not a readable image") from exc
+
+
 class ModelService:
     def __init__(self, checkpoint_path=config.CHECKPOINT_PATH):
         ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
@@ -35,12 +45,7 @@ class ModelService:
             self.centroids = torch.from_numpy(c / np.linalg.norm(c, axis=1, keepdims=True)).float()
 
     def _load_image(self, data):
-        try:
-            img = Image.open(io.BytesIO(data))
-            img = ImageOps.exif_transpose(img)  # phone photos carry rotation in EXIF
-            return img.convert("RGB")
-        except Exception as exc:  # PIL raises many different errors
-            raise ImageError("File is not a readable image") from exc
+        return load_image(data)
 
     @torch.inference_mode()
     def predict(self, data, top_k=config.TOP_K):

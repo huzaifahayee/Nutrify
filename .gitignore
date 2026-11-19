@@ -42,3 +42,6 @@ node_modules/
 app/frontend/dist/
 *.bbl
 *.blg
+
+# User feedback (contains user photos)
+feedback/

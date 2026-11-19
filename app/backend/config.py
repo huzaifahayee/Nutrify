@@ -7,6 +7,7 @@ CHECKPOINT_PATH = REPO_ROOT / "checkpoints" / "efficientnet_best.pt"
 THRESHOLD_PATH = REPO_ROOT / "results" / "confidence_threshold.json"
 OOD_THRESHOLDS_PATH = REPO_ROOT / "results" / "ood_thresholds.json"
 OOD_REFERENCE_PATH = REPO_ROOT / "results" / "ood_reference.npz"
+FEEDBACK_DIR = REPO_ROOT / "feedback"  # user corrections; Git-ignored (contains user photos)
 
 DEFAULT_THRESHOLD = 0.5  # used until results/confidence_threshold.json exists
 TOP_K = 3
