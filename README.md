@@ -36,7 +36,8 @@ Nutrify/
 │   ├── backend/              # FastAPI: model loading and /predict
 │   └── frontend/             # React (Vite) web app
 ├── tests/
-│   └── test_api.py           # backend tests (need the weights file)
+│   ├── test_api.py           # backend tests (need the weights file)
+│   └── test_calories.py      # calorie module tests
 ├── src/
 │   ├── dataset.py
 │   ├── efficientnet_model.py
@@ -46,18 +47,25 @@ Nutrify/
 │   ├── baseline_cnn.py
 │   ├── evaluate.py
 │   ├── bias_check.py
-│   ├── calories.py           (Abdullah, in progress)
-│   └── calories.json         (Abdullah, in progress)
+│   ├── confidence_analysis.py
+│   ├── sample_predictions.py
+│   ├── calories.py
+│   └── calories.json
 ├── results/                  # CSV logs, curves, test predictions, metrics, bias check
 ├── docs/
 │   └── COLAB.md              # running on a Colab T4
 └── report/
     ├── main.tex
+    ├── abstract.tex
     ├── phase1.tex
     ├── phase2.tex
     ├── phase3.tex
     ├── phase4.tex
+    ├── phase5_app.tex
+    ├── phase5_calories.tex
     ├── contribution.tex
+    ├── references.bib
+    ├── main.pdf              # final compiled report
     └── figures/
 ```
 `checkpoints/`, `runs/` and `data/` are not in Git.
@@ -148,6 +156,11 @@ To run on a Colab T4 GPU, follow `docs/COLAB.md`.
 | `results/bias_<model>_class.csv`, `_confusions.csv`, `_subgroups.csv` | error analysis and subgroup accuracy |
 | `results/failures_<model>.png` | misclassified test images |
 | `results/hparam_results.csv` | one row per tuning run |
+| `results/confidence_val.csv` | coverage and accuracy for each confidence threshold, on the validation set |
+| `results/confidence_threshold.json` | the chosen threshold (0.45) |
+| `results/confidence_test.csv` | coverage and accuracy at that threshold on the test set |
+| `results/non_dish_check.csv` | informal check with six non-dish photos |
+| `results/sample_predictions.png` | grid of correct and wrong test predictions |
 | `checkpoints/<model>_best.pt` | best weights (not in Git) |
 
 The predictions CSV has the columns `path`, `true_label`, `pred_label`, then one
@@ -194,12 +207,20 @@ curl -F "file=@photo.jpg" -F "portion=1" http://localhost:8000/predict
 ```
 
 The app answers "not sure" and shows no calories when the top probability is below
-the confidence threshold. The threshold is read from
-`results/confidence_threshold.json` when that file exists (Abdullah, in progress)
-and defaults to 0.5. Calorie values come from `src/calories.py` (Abdullah, in
-progress); until it exists the calorie block says the data is not available.
+the confidence threshold in `results/confidence_threshold.json`, which is 0.45. It was
+chosen on the validation set (accuracy 0.9173 at coverage 0.8313) and reported once on the
+test set (accuracy 0.8727 at coverage 0.8456); see `results/confidence_val.csv` and
+`results/confidence_test.csv`. Calorie ranges (low, typical, high per serving) come from
+`src/calories.py` and `src/calories.json`.
 
-Backend tests (they load the weights file):
+To redo the threshold analysis and the sample-predictions figure (they need the weights
+file and `data/processed/`):
+```bash
+python src/confidence_analysis.py
+python src/sample_predictions.py
+```
+
+Tests (the API tests load the weights file):
 ```bash
 pytest tests/ -q
 ```

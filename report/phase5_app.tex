@@ -1,0 +1,119 @@
+% Application report section -- written by Huzaifa.
+% Included from main.tex inside \section{Application and Calorie Module}.
+\subsection{Web Application Architecture and Interface}
+
+The trained EfficientNet-B0 is served through a small web application with two
+parts: a Python backend that runs the model, and a browser frontend where the
+user uploads a photo. Both run locally. Hosting was out of scope for this
+deliverable. The backend lives in \texttt{app/backend/} and the frontend in
+\texttt{app/frontend/}.
+
+\subsubsection{Backend}
+The backend is a FastAPI application (\texttt{app/backend/main.py}) with three
+endpoints, listed in Table~\ref{tab:endpoints}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|p{10.4cm}|}
+    \hline
+    \textbf{Endpoint} & \textbf{Purpose} \\ \hline
+    \texttt{GET /health} & Status, number of classes, confidence threshold and
+      whether the calorie module is available. \\ \hline
+    \texttt{GET /dishes} & The 14 dish names. \\ \hline
+    \texttt{POST /predict} & Takes an image (\texttt{file}, at most 10~MB) and an
+      optional \texttt{portion} between 0.25 and 4 (default 1). Returns the top 3
+      dishes with confidence, a \texttt{confident} flag, the threshold, and the
+      calorie range. \\ \hline
+  \end{tabular}
+  \caption{Backend endpoints.}
+  \label{tab:endpoints}
+\end{table}
+
+\texttt{app/backend/model\_service.py} loads \texttt{checkpoints/efficientnet\_best.pt}
+once, when the server starts, and keeps the model in memory in evaluation mode.
+Each uploaded image is opened with Pillow, rotated according to its EXIF
+orientation (phone photos often store rotation there), converted to RGB, and
+passed through the same validation transform used in training
+(\texttt{eval\_transforms()} in \texttt{src/dataset.py}: resize to
+$224 \times 224$ and ImageNet mean and standard deviation). Reusing that function
+means the application cannot drift away from the preprocessing the model was
+evaluated with. The softmax output gives the top 3 classes.
+
+{\sloppy
+The top-1 probability is compared with the confidence threshold read from
+\texttt{results/\allowbreak confidence\_\allowbreak threshold.json}, which is $0.45$ (chosen on the
+validation set, see the subsection on the confidence threshold below). If the probability is at or above
+the threshold, the response is marked \texttt{confident} and the backend calls
+\texttt{get\_calories(dish, portion)} from \texttt{src/calories.py} for the top
+dish. Otherwise \texttt{calories} is \texttt{null}, so the interface never shows
+an energy value for a dish the model is unsure about. An unreadable file returns
+status 400, a file over 10~MB returns 413, and a \texttt{portion} outside
+0.25 to 4 returns 422. If the calorie module cannot be imported, the application
+still returns the dish and confidence and leaves the calories empty.
+\par}
+
+Five automated tests in \texttt{tests/test\_api.py} check the health and dish
+endpoints, the shape of a prediction (three results in descending order of
+confidence, \texttt{confident} consistent with the threshold, calories empty when
+not confident), and that a non-image file and an out-of-range portion are
+rejected. They need the weights file, so they are skipped when it is absent.
+
+\subsubsection{Frontend}
+The frontend is a React application built with Vite
+(\texttt{app/frontend/src/}). During development it forwards requests under
+\texttt{/api} to the backend on port 8000. Its main parts are:
+\begin{itemize}
+  \item \textbf{Upload and camera} (\texttt{UploadZone}, \texttt{CameraCapture}):
+        drag and drop, a file picker, or a photo taken with the device camera.
+        If camera permission is blocked the interface says so and falls back to
+        the file picker.
+  \item \textbf{Result card} (\texttt{ResultCard}): the dish name, the confidence
+        as a percentage, and an energy estimate with its low-to-high range and
+        serving description. When the answer is not confident it shows
+        ``Couldn't tell'' with the best guess and the threshold, and no
+        calories.
+  \item \textbf{Portion picker} (\texttt{PortionPicker}): four buttons, Small
+        ($0.75\times$), Regular ($1\times$), Large ($1.5\times$) and Double
+        ($2\times$). Choosing one sends the same photo to the backend again with
+        the new \texttt{portion}, so the energy values come from the server and
+        are not recomputed in the browser.
+  \item \textbf{Top guesses} (\texttt{Guesses}): the three most likely dishes with
+        their confidences.
+  \item \textbf{Sources}: an expandable list of the references behind the
+        calorie numbers, taken from \texttt{src/calories.json}.
+  \item \textbf{Session history} (\texttt{History}): the last six photos and
+        their results, kept in memory only, so earlier results can be reopened
+        without uploading the photo again.
+\end{itemize}
+The page also has a landing section, a short explanation of how the system
+works, the list of the 14 supported dishes, and a light and dark theme. Error
+messages cover an unreachable server, a file that is not an image, and a photo
+over 10~MB.
+
+\subsubsection{Interface examples}
+Figure~\ref{fig:app-result} shows a confident prediction for a chicken biryani
+photo from the test set. Figure~\ref{fig:app-notsure} shows a photo of aloo gosht
+that the model scored below the threshold, so the application answers
+``Couldn't tell'' and hides the calorie estimate. In that example the model's
+best guess is nihari at 36\%, which is below the 45\% threshold.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth,height=0.55\textheight,keepaspectratio]{app_screenshot.png}
+  \caption{Confident prediction: dish, confidence, calorie range for a regular
+  serving, portion buttons, top three guesses and session history.}
+  \label{fig:app-result}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth,height=0.55\textheight,keepaspectratio]{app_not_sure.png}
+  \caption{Low-confidence prediction: the application reports that it is not sure
+  and shows no calorie estimate.}
+  \label{fig:app-notsure}
+\end{figure}
+
+The application does not detect the portion size from the photo. The user
+chooses it, and the calorie numbers are estimates from recipes and food
+composition tables (see the calorie and threshold limitations below).

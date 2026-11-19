@@ -40,3 +40,5 @@ ABDULLAH_D3.md
 # Frontend
 node_modules/
 app/frontend/dist/
+*.bbl
+*.blg
