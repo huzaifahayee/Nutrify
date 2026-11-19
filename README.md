@@ -30,6 +30,7 @@ aloo gosht, seekh kebab, chicken tikka, samosa, pakora, paratha roll, halwa puri
 Nutrify/
 ├── README.md
 ├── .gitignore
+├── run.sh                    # one-command launcher for the app
 ├── requirements.txt          # model training, evaluation and the app backend
 ├── data scripts/             # Phase 2 code, with its own requirements.txt
 ├── app/
@@ -188,7 +189,12 @@ The web app has a FastAPI backend and a React frontend. You need the weights at
 `checkpoints/efficientnet_best.pt` (see Model Weights), the Python packages from
 `requirements.txt`, and Node.js 20 or newer with npm.
 
-Terminal 1, from the repo root (backend on port 8000):
+The quickest way, from the repo root (starts both and opens the browser; stop with Ctrl+C):
+```bash
+./run.sh
+```
+
+Or start them by hand in two terminals. Terminal 1, from the repo root (backend on port 8000):
 ```bash
 uvicorn app.backend.main:app --port 8000
 ```
